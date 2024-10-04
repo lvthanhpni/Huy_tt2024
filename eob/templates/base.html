@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>EOB</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'home/style/style.css'%}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="header-navigator">
+        <div class="navigator-left">
+          <p><a>Công trình tiêu biểu</a></p>
+          <p><a>Tin Tức</a></p>
+        </div>
+        <div class="navigator-right">
+          <p><a>Đăng Ký Thành Viên</a></p>
+          <p><a>VLXD Đăng Ký</a></p>
+          <p><a>Đăng Nhập</a></p>
+          <button class="language-button">
+            <svg
+              viewBox="0 0 36 36"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              aria-hidden="true"
+              role="img"
+              class="iconify iconify--twemoji flag"
+              preserveAspectRatio="xMidYMid meet"
+              fill="#000000"
+            >
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g
+                id="SVGRepo_tracerCarrier"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></g>
+              <g id="SVGRepo_iconCarrier">
+                <path
+                  fill="#DA251D"
+                  d="M32 5H4a4 4 0 0 0-4 4v18a4 4 0 0 0 4 4h28a4 4 0 0 0 4-4V9a4 4 0 0 0-4-4z"
+                ></path>
+                <path
+                  fill="#FF0"
+                  d="M19.753 16.037L18 10.642l-1.753 5.395h-5.672l4.589 3.333l-1.753 5.395L18 21.431l4.589 3.334l-1.753-5.395l4.589-3.333z"
+                ></path>
+              </g>
+            </svg>
+            VI
+            <svg
+              fill="#ffffff"
+              viewBox="-6.5 0 32 32"
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              stroke="#ffffff"
+              class="dropdown-icon"
+            >
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g
+                id="SVGRepo_tracerCarrier"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></g>
+              <g id="SVGRepo_iconCarrier">
+                <title>dropdown</title>
+                <path
+                  d="M18.813 11.406l-7.906 9.906c-0.75 0.906-1.906 0.906-2.625 0l-7.906-9.906c-0.75-0.938-0.375-1.656 0.781-1.656h16.875c1.188 0 1.531 0.719 0.781 1.656z"
+                ></path>
+              </g>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="header-maincontent">
+        <div class="header-left">
+          {% load static %}
+          <img
+            class="header-logo"
+            src="{% static 'home/images/header_logo.png' %}"
+          />
+          <div class="header-dropdown-menu">
+            <p>THƯ VIỆN MODEL</p>
+            <svg
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv dropdown-menu-icon"
+              focusable="false"
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              data-testid="KeyboardArrowDownIcon"
+            >
+              <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="searchbox">
+            <input class="searchbox-input" placeholder="Tìm kiếm" type="text">
+            <button class="searchbox-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15.7955 15.8111L21 21M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+            </button>
+          <div>
+        </div>
+      </div>
+    </header>
+    {% block content %}
+    {% endblock %}
+    <footer>
+      <div class="footer-information">
+        <div class="footer-companyinfo">
+          <p class="footer-infotitle">CÔNG TY CỔ PHẦN ERA OF BIM</p>
+          <p>Tầng 4 62A Huỳnh Mẫn Đạt, Phường 19, Quận Bình Thạnh, Tp.Hồ Chí Minh, Việt Nam</p>
+          <p>info.eob@gmail.com</p>
+        </div>
+        <div class="footer-fastnavigation">
+          <p class="footer-infotitle">TRUY CẬP NHANH</p>
+          <p>Trang chủ</p>
+          <p>Tất cả thư viện</p>
+          <p>Thư viện EOB</p>
+          <p>Thư viện VLXD</p>
+        </div>
+        <div class="footer-other">
+          <p class="footer-infotitle">KHÁC</p>
+          <p>Hoạt động</p>
+          <p>Khóa học</p>
+        </div>
+        <div class="footer-sociallink">
+          <p>THEO DÕI CHÚNG TÔI</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

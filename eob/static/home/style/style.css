@@ -1,0 +1,410 @@
+* {
+  padding: 0px;
+  margin: 0px;
+}
+
+header {
+  font-family: 'Open Sans';
+  background: hsla(0,0%,100%,.98);
+  box-shadow: 2px 2px 7px rgba(48,57,91,.5);
+  position: fixed;
+  width: 100%;
+}
+
+.header-navigator {
+  background-color: #1c2d5a;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  height: 47px;
+  align-items: center;
+  font-size: 0.8rem;
+  color: white;
+}
+
+.navigator-left{
+  display: flex;
+  margin: 0px 20px;
+  height: 100%;
+}
+
+.navigator-left p{
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin: 0px 16px;
+}
+
+.navigator-right{
+  display: flex;
+  margin: 0px 20px;
+  height: 100%;
+  padding-right: 30px;
+}
+
+.navigator-right p {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin: 0px 16px;
+}
+
+.language-button {
+  width: 69px;
+  background: none;
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.language-button .flag{
+  width: 16px;
+  margin-right: 3px;
+}
+
+.language-button .dropdown-icon{
+  width: 8px;
+  margin-left: 3px;
+}
+
+.header-maincontent {
+  margin: 8px 16px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 41px; 
+}
+
+.header-logo {
+  width: 120px;
+  margin: 8px 17px;
+}
+
+.header-dropdown-menu {
+  margin: 0px 18px;
+  color: #1c2d5a;
+  font-weight: 700;
+  display: flex;
+  cursor: pointer;
+}
+
+.dropdown-menu-icon{
+  width: 24px;
+  height: 24px;
+}
+
+.content {
+  padding-top: 144px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.searchbox {
+  height: 54px;
+  border: 3px solid #dbe0de;
+  border-radius: 80px;
+  display: flex;
+  width: 440px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.searchbox-input {
+  border: none;
+  width: 70%;
+  height: 100%;
+  margin-left: 4%;
+  border-radius: 80px 0px 0px 80px;
+  font-size: 1rem;
+}
+
+.searchbox-icon {
+  width: 15%;
+  background: none;
+  border: none;
+  max-width: 24px;
+  max-height: 24px;
+}
+
+.searchbox-icon:hover {
+  cursor: pointer;
+}
+
+.searchbox-input:focus-visible{
+  outline: none;
+}
+
+footer {
+  background-color: #1b2c5a;
+  padding: 48px 15px 15px 0px;
+  color: white;
+  font-family: 'Open Sans';
+}
+
+.footer-information {
+  padding-top: 48px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.footer-companyinfo {
+  max-width: 440px;
+}
+
+.footer-infotitle {
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  font-size: 1.5rem;
+}
+
+.footer-information p:not(.footer-infotitle) {
+  margin-bottom: 8px;
+}
+
+.main-banner {
+  min-height: 680px;
+  background-image: url('../images/carousel_background.png');
+  background-position: center bottom;
+}
+
+.content .topic-section {
+  padding: 48px 144px;
+  display: grid;
+  flex-wrap: wrap;
+  font-family: 'Open Sans';
+  grid-template-columns: auto auto;
+  gap: 30px;
+}
+
+.topic-card {
+  display: flex;
+  padding: 15px;
+  border: 1px solid #dbdbdb;
+  min-height: 300px;
+  transition: 0.5s;
+}
+
+.topic-card:hover {
+  box-shadow: 0 0 30px #ddd;
+}
+
+.topic-image {
+  max-height: 270px;
+  width: 100%;
+}
+
+.topic-title {
+  text-align: center;
+  color: #1c2d5a;
+  line-height: 1.2;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.topic-text {
+  font-size: 0.8rem;
+}
+
+.topic-image-part{
+  flex: 3.5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 35%;
+}
+
+.topic-text-part{
+  flex: 6.5;
+  margin-left: 30px;
+  margin-right: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.topic-button {
+  color: #1c2d5a;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  cursor: pointer;
+}
+
+.topic-button svg {
+  width: 14.14px;
+  height: auto;
+  margin-left: 2px;
+}
+
+.statistics {
+  display: flex;  
+  justify-content: space-around;
+  flex-wrap: wrap;
+  font-family: 'Open Sans';
+  margin-bottom: 40px;
+  margin-top: 61px;
+  padding: 0px 45px;
+}
+
+.statistic {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.statistic-icon {
+  max-height: 50px;
+}
+
+.statistic-name {
+  text-align: center;
+  font-size: 14.4px;
+  padding-top: 4px;
+  color: #1c2d5a;
+}
+
+.statistic-number {
+  text-align: center;
+  font-size: 56px;
+  color: #212F5A;
+  font-weight: 700;
+}
+
+.search-section {
+  width: 100%;
+  position: relative;
+  font-family: 'Open Sans';
+}
+
+.search-section-background {
+  width: 100%;
+}
+
+.search-section-blur {
+  padding-top: 16px;
+  padding-bottom: 24px;
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: hsla(0,25%,98%,.7);
+}
+
+.search-section-title {
+  font-size: 1.5rem;
+  color: #1b2c5a;
+  font-weight: 700;
+}
+
+.searchbox-section {
+  height: 52px;
+  border-radius: 80px 0px 0px 80px;
+  width: 30%;
+}
+
+.searchbox-section-input{
+  height: 52px; 
+  border-radius: 80px 0px 0px 80px;
+  border: none;
+  width: 70%;
+  padding-left: 10px;
+}
+
+.searchbox-section-button {
+  width: 25%;
+  border-radius: 0px 80px 80px 0px;
+  height: 52px;
+  border: 3px solid #dbe0de;
+  background: none;
+}
+
+.news-section{
+  padding: 48px 159px;
+  font-family: 'Open Sans';
+}
+
+.news-header {
+  margin-bottom: 24px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #1b2c5a;
+}
+
+.news-main-part {
+  display: flex;
+  width: 100%;
+  flex-wrap: nowrap;
+  gap: 30px;
+}
+
+.news-text-part {
+  padding: 16px;
+}
+
+.news-card {
+  flex: 1;
+  border: 1px solid #dee2e6;
+  display: flex;
+  flex-direction: column;
+  transition: 0.5s;
+}
+
+.news-card:hover {
+  box-shadow: 0 0 30px #ddd;
+}
+
+.news-card img{
+  width: 100%;
+}
+
+.news-text-part {
+}
+
+.news-title {
+  padding-top: 16px;
+  margin-bottom: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.news-content {
+  padding-top: 24px;
+  margin-bottom: 16px;
+  font-size: 12.8px;
+  max-width: 344px;
+  height: 116px;
+  overflow: hidden;
+  display: -webkit-box;
+}
+
+.news-card-button{
+  align-self: flex-end;
+  margin-top: 29px;
+  padding: 0px 15px 15px 0px;
+  font-size: 14.4px;
+  color: #1b2c5a;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.news-card-button svg{
+  width: 14.14px;
+  height: auto;
+}
+
+@media screen and (max-width: 1440px) {
+  
+}

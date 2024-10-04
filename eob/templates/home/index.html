@@ -1,0 +1,82 @@
+{% extends "../base.html" %}
+{% block content %}
+<div class="content">
+  <div class="main-banner">
+    
+  </div> 
+  <div class="topic-section">
+    {% for topic in topics %}
+    <div class="topic-card">
+      <div class="topic-image-part">
+        <img class="topic-image" src="{{ topic.topic_image.url }}" alt="{{ topic.topic_title }}">
+      </div>
+      <div class="topic-text-part">
+        <div class="topic-text">
+          <p class="topic-title">{{topic.topic_title}}</p>
+          <p class="topic-content">{{topic.topic_content}}</p>
+        </div>
+        <div class="topic-button">
+          <p><a>Xem thêm <svg fill="#000000" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M8.489 31.975c-0.271 0-0.549-0.107-0.757-0.316-0.417-0.417-0.417-1.098 0-1.515l14.258-14.264-14.050-14.050c-0.417-0.417-0.417-1.098 0-1.515s1.098-0.417 1.515 0l14.807 14.807c0.417 0.417 0.417 1.098 0 1.515l-15.015 15.022c-0.208 0.208-0.486 0.316-0.757 0.316z"></path> </g></svg></a></p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="statistics">
+    <div class="statistic">
+      {% load static %}
+      <img class="statistic-icon" src="{% static '/home/images/member_icon.png'%}" alt="member">
+      <p class="statistic-name">Thành viên</p>
+      <p class="statistic-number">1315</p>
+    </div>
+    <div class="statistic">
+      {% load static %}
+      <img class="statistic-icon" src="{% static '/home/images/building_unit_icon.png'%}" alt="member">
+      <p class="statistic-name">Đơn vị VLXD</p>
+      <p class="statistic-number">3</p>
+    </div>
+    <div class="statistic">
+      {% load static %}
+      <img class="statistic-icon" src="{% static '/home/images/laptop_icon.png'%}" alt="member">
+      <p class="statistic-name">Family</p>
+      <p class="statistic-number">198</p>
+    </div>
+    <div class="statistic">
+      {% load static %}
+      <img class="statistic-icon" src="{% static '/home/images/document_icon.png'%}" alt="member">
+      <p class="statistic-name">Tài liệu</p>
+      <p class="statistic-number">198</p>
+    </div>
+  </div>
+  <div class="search-section">
+    {% load static %}
+    <img class="search-section-background" src="{% static '/home/images/search_background.jpg' %}">
+    <div class="search-section-blur">
+      <p class="search-section-title">Công trình tiêu biểu</p>
+      <div class='searchbox-section'>
+        <input placeholder="Tìm kiếm" class="searchbox-section-input">
+        <button class="searchbox-section-button">Tất cả NCC</button>
+      </div>
+    </div>
+  </div>
+  <div class="news-section">
+    <div class="news-header">
+      <p>Tin tức cập nhật</p>
+    </div>
+    <div class="news-main-part">
+      {% for news_data in news %}
+      <div class="news-card">
+        <img src="{{ news_data.news_image.url}}">
+        <div class="news-text-part">
+          <p class="news-title">{{ news_data.news_title}}</p>
+          <p class="news-content">{{ news_data.news_content}}</p>
+        </div>
+        <div class="news-card-button">
+          <p>Xem thêm  <svg fill="#000000" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M8.489 31.975c-0.271 0-0.549-0.107-0.757-0.316-0.417-0.417-0.417-1.098 0-1.515l14.258-14.264-14.050-14.050c-0.417-0.417-0.417-1.098 0-1.515s1.098-0.417 1.515 0l14.807 14.807c0.417 0.417 0.417 1.098 0 1.515l-15.015 15.022c-0.208 0.208-0.486 0.316-0.757 0.316z"></path> </g></svg></p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
