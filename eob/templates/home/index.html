@@ -1,9 +1,66 @@
 {% extends "../base.html" %}
 {% block content %}
 <div class="content">
-  <div class="main-banner">
-    
+  {% load static %}
+  <div id="main-banner" class="main-banner" style="background-image: url('{% static '/home/images/carousel_background.png'%}')">
+    <div class="carousel-banner">
+      {% load static %}
+      <div id="carousel-first" style="opacity: 1;">
+        <img src="{% static "home/images/carousel_1.png" %}">
+      </div>
+      <div id="carousel-second" style="opacity: 0;">
+        <img src="{% static "home/images/carousel_2.png" %}">
+      </div>
+      <div id="carousel-third" style="opacity: 0;">
+        <img src="{% static "home/images/carousel_3.png" %}">
+      </div>
+    </div>
+    <div id="carousel-paginator">
+      <div id="paginator-first-button" class="paginator-button"></div>
+      <div id="paginator-second-button" class="paginator-button"></div>
+      <div id="paginator-third-button" class="paginator-button"></div>
+    </div>
   </div> 
+  <div class="brand-carousel">
+    <div class="brand-slider">
+      <a class="slider-items">
+        <img class="slider-images" src="{% static 'home/images/brand_carousel.png'%}">
+      </a>
+      <a class="slider-items">
+        <img class="slider-images" src="{% static 'home/images/brand_carousel_1.png'%}">
+      </a>
+      <a class="slider-items">
+        <img class="slider-images" src="{% static 'home/images/brand_carousel_2.png'%}">
+      </a>
+      <a class="slider-items">
+        <img class="slider-images" src="{% static 'home/images/brand_carousel.png'%}">
+      </a>
+      <a class="slider-items">
+        <img class="slider-images" src="{% static 'home/images/brand_carousel_1.png'%}">
+      </a>
+      <a class="slider-items">
+        <img class="slider-images" src="{% static 'home/images/brand_carousel_2.png'%}">
+      </a>
+      <a class="slider-items">
+        <img class="slider-images" src="{% static 'home/images/brand_carousel.png'%}">
+      </a>
+      <a class="slider-items">
+        <img class="slider-images" src="{% static 'home/images/brand_carousel_1.png'%}">
+      </a>
+      <a class="slider-items">
+        <img class="slider-images" src="{% static 'home/images/brand_carousel_2.png'%}">
+      </a>
+      <a class="slider-items">
+        <img class="slider-images" src="{% static 'home/images/brand_carousel.png'%}">
+      </a>
+      <a class="slider-items">
+        <img class="slider-images" src="{% static 'home/images/brand_carousel_1.png'%}">
+      </a>
+      <a class="slider-items">
+        <img class="slider-images" src="{% static 'home/images/brand_carousel_2.png'%}">
+      </a>
+    </div>
+  </div>
   <div class="topic-section">
     {% for topic in topics %}
     <div class="topic-card">
@@ -55,7 +112,18 @@
       <p class="search-section-title">Công trình tiêu biểu</p>
       <div class='searchbox-section'>
         <input placeholder="Tìm kiếm" class="searchbox-section-input">
-        <button class="searchbox-section-button">Tất cả NCC</button>
+        <button id="searchbox-section-button" class="searchbox-section-button">Tất cả NCC</button>
+        <div id="dropdown-search-section" class="dropdown-search-section">
+          <p class="dropdown-selection"><a>Tất cả NCC</a></p>
+          <p class="dropdown-selection"><a>AN CƯỜNG</a></p>
+          <p class="dropdown-selection"><a>DULUX</a></p>
+          <p class="dropdown-selection"><a>BM WINDOWS</a></p>
+          <p class="dropdown-selection"><a>LYSAGHT</a></p>
+          <p class="dropdown-selection"><a>EUROTILE</a></p>
+          <p class="dropdown-selection"><a>SAINT-GOBAIN</a></p>
+          <p class="dropdown-selection"><a>PANASONIC</a></p>
+          <p class="dropdown-selection"><a>SCG</a></p>
+        </div>
       </div>
     </div>
   </div>

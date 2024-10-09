@@ -1,0 +1,81 @@
+{% extends "../base.html" %} {% block content %}
+<div>
+  <div class="main-container">
+    <div class="registry-container">
+      <div class="registry-form">
+        <div class="form-decoration"></div>
+        <div class="register-form-body">
+          <div class="form-body-side">
+            <div class="form-inputs">
+              <p class="form-title">Đăng ký thành viên EOB</p>
+              <div class="form-choice">{{form.organization}}</div>
+              <div class="form-input personal-choice">{{form.name}}</div>
+              <div class="form-input organization-choice">
+                {{form.organization_name}}
+              </div>
+              <div class="form-input organization-choice">
+                {{form.company_code}}
+              </div>
+              <div class="form-input">{{form.phone_number}}</div>
+              <div class="form-input">{{form.email}}</div>
+              <div class="form-input">{{form.password}}</div>
+              <div class="form-input">{{form.confirm_password}}</div>
+              <div class="form-choice">
+                {{form.agree_policy}}
+                <label class="agree_label" for="agree_policy"
+                  >Đồng ý tất cả các điều khoản trong điều khoản sử dụng</label
+                >
+              </div>
+              <div
+                style="
+                  display: flex;
+                  justify-content: center;
+                  margin-top: 24px;
+                  margin-bottom: 24px;
+                "
+              >
+                <button disabled class="register-submit" type="submit">
+                  Đăng ký
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="form-body-side">
+            <div class="form-text-content">
+              {% load static %}
+              <img
+                class="form-logo"
+                src="{% static 'home/images/header_logo.png'%}"
+              />
+              <div>
+                <p class="form-welcome">
+                  "<b>Đăng ký thành viên EOB</b> để bắt ddaauaf trao đổi family
+                  thiết kế và kiến thức kiến trúc - xây dựng"
+                </p>
+              </div>
+              <div
+                style="width: 58px; border: 1px solid #000; margin: 16px 0px"
+              ></div>
+              <div>
+                <p><b>Quyyền lợi thành viên Star:</b></p>
+                <ul style="padding: 0px 16px">
+                  <li>Tải và không giới hạn các family thiết kế chất lượng</li>
+                  <li>
+                    Xem các bài viết chuyên ngành của các chuyên gia hàng đầu
+                  </li>
+                  <li>
+                    Tham gia các hoạt động chuyên môn và giao lưu với các đơn vị
+                    VLXD
+                  </li>
+                  <li>Tham gia chương trình tích điểm thành viên</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% load static %} <script src="{% static "home/script/register.js"%}"/>
+</div>
+{% endblock %}

@@ -4,6 +4,8 @@
     <title>EOB</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'home/style/style.css'%}" />
+    <link rel="stylesheet" href="{% static 'home/style/registry.css'%}"/>
+    <link rel='stylesheet' href="{% static 'home/style/login.css'%}">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -19,9 +21,9 @@
           <p><a>Tin Tức</a></p>
         </div>
         <div class="navigator-right">
-          <p><a>Đăng Ký Thành Viên</a></p>
-          <p><a>VLXD Đăng Ký</a></p>
-          <p><a>Đăng Nhập</a></p>
+          <p class="navigator-item"><a>Đăng Ký Thành Viên</a></p>
+          <p class="navigator-item"><a>VLXD Đăng Ký</a></p>
+          <p class="navigator-item"><a>Đăng Nhập</a></p>
           <button class="language-button">
             <svg
               viewBox="0 0 36 36"
@@ -82,7 +84,7 @@
             class="header-logo"
             src="{% static 'home/images/header_logo.png' %}"
           />
-          <div class="header-dropdown-menu">
+          <div id="dropdown-menu-button" class="header-dropdown-menu">
             <p>THƯ VIỆN MODEL</p>
             <svg
               class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv dropdown-menu-icon"
@@ -93,6 +95,11 @@
             >
               <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"></path>
             </svg>
+            <div id="dropdown-menu" class="dropdown-menu">
+              <p>Tất cả thư viện</p>
+              <p>Thư viện EOB</p>
+              <p>Thư viện VLXD</p>
+            </div>
           </div>
         </div>
         <div class="header-right">
@@ -131,5 +138,7 @@
         </div>
       </div>
     </footer>
+    {% load static %}
+    <script src="{% static "home/script/script.js" %}"></script>
   </body>
 </html>

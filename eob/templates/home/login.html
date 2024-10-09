@@ -1,0 +1,30 @@
+{% extends "../base.html" %} {% block content %}
+<div class="login-main-container">
+  <div class="login-form">
+    <div
+      style="
+        height: 17px;
+        background-color: #000;
+        border-radius: 10px 10px 0px 0px;
+        width: 100%;
+      "
+    ></div>
+    <div class="login-mainform">
+      <div style="padding: 8px">
+        {% load static %}
+        <img
+          style="width: 120px; padding-top: 16px"
+          src="{% static 'home/images/header_logo.png'%}"
+        />
+      </div>
+      <p class="login-title">Đăng nhập</p>
+      <button class="google-login input-form">Đăng nhập bằng Google</button>
+      <button class="facebook-login input-form">Đăng nhập bằng Facebook</button>
+      <div class="input-form">{{form.email}}</div>
+      <div class="input-form">{{form.password}}</div>
+      <div>{{form.remember_password}}</div>
+      <div><button>Đăng nhập</button></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
