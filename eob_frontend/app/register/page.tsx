@@ -12,7 +12,7 @@ function RegisterPage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get("http://192.168.1.38:8000/api/user/");
+        const response = await axios.get("http://localhost:8000/api/user/");
         console.log(response.data);
       } catch (error) {
         console.log(error);
@@ -29,16 +29,20 @@ function RegisterPage() {
     data.append("phone_number", phoneNumber);
     data.append("name", fullName);
     console.log(data.getAll("name"));
-    try {
-      const response = await axios.post(
-        "http://192.168.1.38:8000/api/register/",
-        data
-      );
-      localStorage.setItem("access", response.data.access);
-      localStorage.setItem("refreshToken", response.data.refreshToken);
-      alert("Đăng ký thành công");
-    } catch (error) {
-      console.log(error);
+    if (password !== confirmPassword) {
+      alert("Mật khẩu không trùng khớp");
+    } else {
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/api/register/",
+          data
+        );
+        localStorage.setItem("access", response.data.access);
+        localStorage.setItem("refresh", response.data.refreshToken);
+        alert("Đăng ký thành công");
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 

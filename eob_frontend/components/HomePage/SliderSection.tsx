@@ -31,8 +31,6 @@ function SliderSection() {
           delay: 2500,
           disableOnInteraction: false,
         }}
-        onSlideChange={() => console.log("slide change")}
-        onSwiper={(swiper) => console.log(swiper)}
       >
         {sliderData.map((item, index) => (
           <SwiperSlide key={index} style={{ height: "100%" }}>

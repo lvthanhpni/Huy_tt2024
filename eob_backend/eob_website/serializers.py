@@ -1,21 +1,35 @@
-from .models import CustomUser
+from .models import CustomUser, IndividualUser, OrganizationUser
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 
 class UserRegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(max_length=255, write_only=True)
+
+    name = serializers.CharField(max_length=255, required=False)
+    organization_name = serializers.CharField(max_length=255, required=False)
+    tax_code = serializers.CharField(max_length=16, required=False)
+
     class Meta:
         model = CustomUser
-        fields = ['name', 'email', 'password', 'phone_number']
+        fields = ['name', 'organization_name', 'tax_code', 'email', 'password', 'phone_number',]
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        user = CustomUser(
-            email = validated_data['email'],
-            name = validated_data['name'],
-            phone_number = validated_data['phone_number']
-        )
-        user.set_password(validated_data['password'])
+        name = validated_data.pop('name', None)
+        organization_name = validated_data.pop('organization_name', None)
+        tax_code = validated_data.pop('tax_code', None)
+
+        password = validated_data.pop('password', None)
+
+        user = CustomUser.objects.create_user(**validated_data)
+        user.set_password(password)
         user.save()
+
+        if name:
+            IndividualUser.objects.create(user=user, name=name)
+        if tax_code and organization_name:
+            OrganizationUser.objects.create(user=user, organization_name=organization_name, tax_code=tax_code)
+
         return user
     
 class UserLoginSerializer(serializers.Serializer):
@@ -34,4 +48,9 @@ class UserLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError('Must include "email" and "password"')
 
         data['user'] = user
-        return data
+        return user
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['name', 'email', 'phone_number']
