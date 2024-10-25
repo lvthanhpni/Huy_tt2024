@@ -26,13 +26,18 @@ SECRET_KEY = 'django-insecure-y2#*k8iix3mo*44&!$(*7m(fp(19e8&azr#4d4=qr7@h#_i)bd
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
 
 INSTALLED_APPS = [
     'corsheaders',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'eob_website.apps.EobWebsiteConfig',
@@ -46,6 +51,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -55,11 +61,44 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+AUTHENTICATION_BACKENDS = (
+  'allauth.account.auth_backends.AuthenticationBackend',
+  'django.contrib.auth.backends.ModelBackend',
+)
+
+SITE_ID = 2
+
+REST_USE_JWT = True
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '754532910179-tkloedp0pkjk6ds0adb7509v4o760o1r.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+      'APP': {
+        'client_id': '754532910179-tkloedp0pkjk6ds0adb7509v4o760o1r.apps.googleusercontent.com',
+        'secret': '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',
+        'key': ''
+      }
+    },
+}
+
+LOGIN_REDIRECT_URL = 'http://localhost:3000/'
+LOGOUT_REDIRECT_URL = 'http://localhost:3000/'
+
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = [
+    'authorization',
+    'content-type',
+    'x-csrftoken',
+]
 
 AUTH_USER_MODEL = 'eob_website.CustomUser'
 
 ALLOWED_HOSTS = ['localhost', '192.168.1.38',]
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:3000']
 
 REST_FRAMEWORK = {
   'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -71,7 +110,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
+    'BLACKLIST_AFTER_ROTATION': False,
 } 
 
 ROOT_URLCONF = 'eob_backend.urls'

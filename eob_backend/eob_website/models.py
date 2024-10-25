@@ -62,3 +62,13 @@ class OrganizationUser(models.Model):
   user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
   organization_name = models.CharField(max_length=255)
   tax_code = models.CharField(max_length=16)
+
+class MaterialUser(models.Model):
+  user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+  company_name = models.CharField(max_length=255)
+  occupation = models.CharField(max_length=255)
+
+class GoogleLoginUser(models.Model):
+  user = models.OneToOneField(CustomUser, on_delete = models.CASCADE)
+  name = models.CharField(max_length=255)
+  email_verified = models.BooleanField()
