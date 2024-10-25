@@ -1,8 +1,6 @@
-"use client";
 import "./globals.css";
 import logo from "../public/assets/images/logo.png";
 import Image from "next/image";
-import axios from "axios";
 import {
   SearchIcon,
   LocationIcon,
@@ -14,24 +12,7 @@ import {
   InstagramIcon,
   DropdownIcon,
 } from "../public/assets/svg";
-import { useEffect } from "react";
-
-const navigation_left = [
-  { title: "Công trình tiêu biểu", link: "/" },
-  { title: "Tin tức", link: "/" },
-];
-
-const navigation_right = [
-  {
-    title: "Đăng ký thành viên",
-    link: "/register",
-  },
-  { title: "VLXD Đăng ký", link: "/" },
-  {
-    title: "Đăng nhập",
-    link: "/login",
-  },
-];
+import NavigationBar from "@/components/Layout/NavigationBar";
 
 const footer_navigation = [
   {
@@ -69,90 +50,22 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const refreshAccessToken = async () => {
-    const refreshToken = localStorage.getItem("refresh");
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/api/token/refresh/",
-        {
-          refresh: refreshToken,
-        }
-      );
-      localStorage.setItem("access", response.data.access);
-      return response.data.access;
-    } catch (error) {
-      console.log(error);
-      localStorage.removeItem("access");
-      localStorage.removeItem("refresh");
-    }
-  };
-
-  const getUserInformation = async () => {
-    let access_token = localStorage.getItem("access");
-    try {
-      const response = await axios.get("http://localhost:8000/api/user/", {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      });
-      console.log(response.data);
-    } catch (err) {
-      if (err.response.status === 401) {
-        access_token = await refreshAccessToken();
-        if (access_token) {
-          await axios.get("http://localhost:8000/api/user/", {
-            headers: {
-              Authorization: `Bearer ${access_token}`,
-            },
-          });
-        } else {
-          console.log("Chưa đăng nhập");
-        }
-      }
-    }
-  };
-
-  useEffect(() => {
-    refreshAccessToken();
-    getUserInformation();
-  }, []);
-
   return (
     <html lang="en">
+      <title>EOB</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
       <body>
         <div className="w-full fixed shadow-[2px_2px_7px_rgba(48,57,91,0.5)] z-50">
-          <div className="px-[16px] flex w-full justify-between h-[47px] bg-[#1c2d5a] text-white text-[0.8rem]">
-            <div className="px-[4px] flex">
-              {navigation_left.map((item) => (
-                <a
-                  className="px-[16px] h-full flex items-center"
-                  key={item.title}
-                  href={item.link}
-                >
-                  {item.title}
-                </a>
-              ))}
-            </div>
-            <div className="px-[15px] flex">
-              {navigation_right.map((item) => (
-                <a
-                  key={item.title}
-                  className="px-[16px] h-full flex items-center"
-                  href={item.link}
-                >
-                  {item.title}
-                </a>
-              ))}
-              <button className="ml-[8px] py-[4px] px-[8px]">Vi</button>
-            </div>
-          </div>
+          <NavigationBar />
           <div className="py-[8px] px-[16px] flex justify-between bg-white">
             <div className="flex items-center flex-1">
-              <Image
-                src={logo}
-                alt="logo"
-                className="w-[120px] my-[8px] ml-[15px]"
-              />
+              <a href="/">
+                <Image
+                  src={logo}
+                  alt="logo"
+                  className="w-[120px] my-[8px] ml-[15px]"
+                />
+              </a>
               <div className="relative px-[20px] py-[10px] ml-[58px]">
                 <p className="uppercase font-bold text-[#1c2d5a] flex">
                   Thư viện Model
