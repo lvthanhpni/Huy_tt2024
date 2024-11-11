@@ -6,18 +6,18 @@ import { Collapse } from "@mui/material";
 function FolderList({
   data,
   level,
-  setIsLastCategory,
+  setIsLastFolder,
 }: {
   data: IFolderItems[];
   level: number;
-  setIsLastCategory: Dispatch<SetStateAction<boolean>>;
+  setIsLastFolder: Dispatch<SetStateAction<boolean>>;
 }) {
   const [isFolderOpen, setIsFolderOpen] = useState(false);
   const handleFolderClick = () => {
     setIsFolderOpen(!isFolderOpen);
     const clickedFolder = data.find((folder) => folder.id === level);
     const hasChildren = clickedFolder && clickedFolder.children.length > 0;
-    setIsLastCategory(!hasChildren);
+    setIsLastFolder(!hasChildren);
   };
 
   return (
@@ -54,7 +54,7 @@ function FolderList({
                 key={index}
                 data={data}
                 level={child}
-                setIsLastCategory={setIsLastCategory}
+                setIsLastFolder={setIsLastFolder}
               />
             </Collapse>
           ));

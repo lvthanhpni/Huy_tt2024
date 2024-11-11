@@ -1,4 +1,4 @@
-from .models import Category, CustomUser, IndividualUser, Occupation, OrganizationUser, MaterialCategory
+from .models import Folder, CustomUser, IndividualUser, Occupation, OrganizationUser
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 
@@ -128,22 +128,15 @@ class OrganizationUserSerializer(serializers.ModelSerializer):
         
         return instance
 
-class CategoryViewSerializer(serializers.ModelSerializer):
+class FolderViewSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Category
+        model = Folder
         fields = ['id','name', 'parent', 'children']
     
     def get_children(self, obj):
-        return CategoryViewSerializer(obj.children.all(), many=True).data
+        return FolderViewSerializer(obj.children.all(), many=True).data
 
 class OccupationCreateViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Occupation
         fields = ['id','name']
-
-
-class MaterialCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MaterialCategory
-        fields = ['id','name', 'parent', 'children']
-
