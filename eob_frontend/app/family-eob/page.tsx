@@ -11,13 +11,13 @@ function EOBLibrary() {
   const [folderListData, setFolderListData] = useState<IFolderItems[]>([
     { id: 0, name: "root", children: [] },
   ]);
-  const [isLastCategory, setIsLastCategory] = useState(false);
+  const [isLastFolder, setIsLastFolder] = useState(false);
 
   useEffect(() => {
     const fetchFolderData = async () => {
       try {
         const response = await axios.get(
-          process.env.NEXT_PUBLIC_API_URL + "/categories"
+          process.env.NEXT_PUBLIC_API_URL + "/folder"
         );
         setFolderListData(response.data);
       } catch {
@@ -57,10 +57,10 @@ function EOBLibrary() {
             <FolderList
               data={folderListData}
               level={1}
-              setIsLastCategory={setIsLastCategory}
+              setIsLastFolder={setIsLastFolder}
             />
           </div>
-          {isLastCategory ? (
+          {isLastFolder ? (
             <div>
               <div>
                 <p className="text-[20px] uppercase text-[#1b2c5a] font-bold">

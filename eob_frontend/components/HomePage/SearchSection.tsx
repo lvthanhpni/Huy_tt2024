@@ -3,7 +3,7 @@ import bg_search from "../../public/assets/images/bg_search.jpg";
 import SearchIcon from "@/public/assets/svg/SearchIcon";
 
 function SearchSection() {
-  const [searchCategory, setSearchCategory] = React.useState("Tất cả NCC");
+  const [searchFolder, setSearchFolder] = React.useState("Tất cả NCC");
   return (
     <div
       className="h-[484px] flex items-end "
@@ -22,7 +22,7 @@ function SearchSection() {
             placeholder="Tìm kiếm"
           />
           <div className="flex relative gap-[10px] rounded-r-[50px] border-2">
-            <button className="">{searchCategory}</button>
+            <button className="">{searchFolder}</button>
             <div className=""></div>
             <button className="w-[16px] mr-[10px] h-[52px] flex items-center justify-center">
               <SearchIcon />

@@ -75,10 +75,11 @@ class MaterialUser(models.Model):
   company_name = models.CharField(max_length=255)
   occupation = models.CharField(max_length=255)
 
-class Category(models.Model):
+class Folder(models.Model):
   name = models.CharField(max_length=255)
   parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
-
+  is_root = models.BooleanField(default=False)
+  owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
   def __str__(self):
     return self.name
@@ -93,7 +94,7 @@ class Material(models.Model):
   preview_image = models.ImageField(upload_to='previews/')
   download_count = models.IntegerField(default=0)
   create_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-  folder_id = models.ForeignKey('Category', on_delete=models.CASCADE, default=1)
+  folder_id = models.ForeignKey('Folder', on_delete=models.CASCADE, default=1)
 
 class Occupation(models.Model):
   name = models.CharField(max_length=255)
@@ -101,6 +102,4 @@ class Occupation(models.Model):
   def __str__(self):
     return self.name
 
-class MaterialCategory(models.Model):
-  material_name = models.CharField(max_length=255)
 
