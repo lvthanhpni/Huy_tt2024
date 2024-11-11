@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,6 +36,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django.contrib.sites',
     'allauth',
+    'drf_yasg',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
@@ -64,6 +66,7 @@ MIDDLEWARE = [
 AUTHENTICATION_BACKENDS = (
   'allauth.account.auth_backends.AuthenticationBackend',
   'django.contrib.auth.backends.ModelBackend',
+  'eob_website.backends.EmailBackend',
 )
 
 SITE_ID = 2
@@ -190,3 +193,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

@@ -14,7 +14,7 @@ function RegisterCompany() {
     data.append("password", password);
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/register/",
+        process.env.NEXT_PUBLIC_API_URL + "/register/",
         data
       );
       window.location.href = "/";

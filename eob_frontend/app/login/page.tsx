@@ -15,11 +15,17 @@ function LoginPage() {
   // Hàm xử lý đăng nhập thông thường
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    const data = new FormData();
+    data.append("email", email);
+    data.append("password", password);
     try {
-      const response = await axios.post("http://localhost:8000/api/login/", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        process.env.NEXT_PUBLIC_API_URL + "/login/",
+        {
+          email,
+          password,
+        }
+      );
       localStorage.setItem("access", response.data.access);
       localStorage.setItem("refresh", response.data.refresh);
       window.location.href = "/";

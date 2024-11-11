@@ -25,7 +25,6 @@ function RegisterPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [fullName, setFullName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [organizationName, setOrganizationName] = useState("");
   const [taxcode, setTaxcode] = useState("");
   const [isIndividual, setIsIndividual] = useState(true);
   const [, setIsAuthorized] = useState(false);
@@ -49,7 +48,6 @@ function RegisterPage() {
     data.append("password", password);
     data.append("phone_number", phoneNumber);
     data.append("name", fullName);
-    data.append("organization_name", organizationName);
     data.append("tax_code", taxcode);
 
     if (password !== confirmPassword) {
@@ -57,7 +55,7 @@ function RegisterPage() {
     } else {
       try {
         const response = await axios.post(
-          "http://localhost:8000/api/register/",
+          process.env.NEXT_PUBLIC_API_URL + "/register/",
           data
         );
         localStorage.setItem("access", response.data.access);
@@ -110,37 +108,25 @@ function RegisterPage() {
               onSubmit={(e) => handleRegister(e)}
               className="flex flex-col w-full px-[24px] gap-[16px]"
             >
-              {isIndividual ? (
+              <div className="py-[10px] px-[14px] h-[52px] border-2 border-[#dbe0de] flex items-center">
+                <input
+                  className="focus-visible:outline-none"
+                  onChange={(e) => {
+                    setFullName(e.target.value);
+                  }}
+                  type="text"
+                  placeholder={isIndividual ? "Họ và tên" : "Tên tổ chức"}
+                />
+              </div>
+              {!isIndividual && (
                 <div className="py-[10px] px-[14px] h-[52px] border-2 border-[#dbe0de] flex items-center">
                   <input
                     className="focus-visible:outline-none"
-                    onChange={(e) => {
-                      console.log(e.target.value);
-                      setFullName(e.target.value);
-                    }}
+                    onChange={(e) => setTaxcode(e.target.value)}
                     type="text"
-                    placeholder="Họ và tên"
+                    placeholder="Mã số thuế"
                   />
                 </div>
-              ) : (
-                <>
-                  <div className="py-[10px] px-[14px] h-[52px] border-2 border-[#dbe0de] flex items-center">
-                    <input
-                      className="focus-visible:outline-none"
-                      onChange={(e) => setOrganizationName(e.target.value)}
-                      type="text"
-                      placeholder="Tên tổ chức"
-                    />
-                  </div>
-                  <div className="py-[10px] px-[14px] h-[52px] border-2 border-[#dbe0de] flex items-center">
-                    <input
-                      className="focus-visible:outline-none"
-                      onChange={(e) => setTaxcode(e.target.value)}
-                      type="text"
-                      placeholder="Mã số thuế"
-                    />
-                  </div>
-                </>
               )}
               <div className="py-[10px] px-[14px] h-[52px] border-2 border-[#dbe0de] flex items-center">
                 <input
