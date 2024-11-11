@@ -16,7 +16,6 @@ function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-<<<<<<< HEAD
       const response = await axios.post(
         process.env.NEXT_PUBLIC_API_URL + "/login/",
         {
@@ -24,12 +23,6 @@ function LoginPage() {
           password,
         }
       );
-=======
-      const response = await axios.post("http://localhost:8000/api/login/", {
-        email,
-        password,
-      });
->>>>>>> b8884514466f89ab739a87b3dcfdceeb403ce8d6
       localStorage.setItem("access", response.data.access);
       localStorage.setItem("refresh", response.data.refresh);
       window.location.href = "/";

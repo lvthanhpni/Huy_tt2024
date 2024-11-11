@@ -1,10 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { checkAuthorization } from "@/utils/authorization";
-<<<<<<< HEAD
 import Image from "next/image";
-=======
->>>>>>> b8884514466f89ab739a87b3dcfdceeb403ce8d6
 
 const navigation_left = [
   { title: "Công trình tiêu biểu", link: "/" },
@@ -27,24 +24,16 @@ interface IUserInformation {
   name: string;
   email: string;
   phone_number: string;
-<<<<<<< HEAD
   avatar: string;
-=======
->>>>>>> b8884514466f89ab739a87b3dcfdceeb403ce8d6
 }
 
 function NavigationBar() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [user, setUser] = useState<IUserInformation>();
-<<<<<<< HEAD
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleLogout = () => {
     console.log("logout");
-=======
-
-  const handleLogout = () => {
->>>>>>> b8884514466f89ab739a87b3dcfdceeb403ce8d6
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
     setIsAuthorized(false);
@@ -55,10 +44,7 @@ function NavigationBar() {
       const { isAuthorized, user } = await checkAuthorization();
       setIsAuthorized(isAuthorized);
       setUser(user);
-<<<<<<< HEAD
       console.log(user);
-=======
->>>>>>> b8884514466f89ab739a87b3dcfdceeb403ce8d6
     };
     getUserInformation();
   }, []);
@@ -80,7 +66,6 @@ function NavigationBar() {
         <div className="px-[15px] flex">
           {isAuthorized && user ? (
             <div
-<<<<<<< HEAD
               className="flex items-center relative"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
@@ -114,12 +99,6 @@ function NavigationBar() {
                   <a>Đăng xuất</a>
                 </div>
               </div>
-=======
-              onClick={handleLogout}
-              className="flex cursor-pointer items-center"
-            >
-              Welcome, {user.name}
->>>>>>> b8884514466f89ab739a87b3dcfdceeb403ce8d6
             </div>
           ) : (
             navigation_right.map((item) => (
