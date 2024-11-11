@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from .models import Category, Occupation, OrganizationUser, CustomUser, IndividualUser
+from .models import Folder, Occupation, OrganizationUser, CustomUser, IndividualUser
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import CategoryViewSerializer, OccupationCreateViewSerializer, UserLoginSerializer, UserRegisterSerializer, OrganizationUserSerializer, IndividualUserSerializer
+from .serializers import FolderViewSerializer, OccupationCreateViewSerializer, UserLoginSerializer, UserRegisterSerializer, OrganizationUserSerializer, IndividualUserSerializer
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -69,14 +69,14 @@ class RegisterView(generics.CreateAPIView):
     response.data.update(self.token_data)
     return response
 
-#Category API
-class CategoryViewSet(generics.ListCreateAPIView):
-  queryset = Category.objects.all()
-  serializer_class = CategoryViewSerializer
+#Folder API
+class FolderViewSet(generics.ListCreateAPIView):
+  queryset = Folder.objects.all()
+  serializer_class = FolderViewSerializer
 
-class CategoryRetrieveView(generics.RetrieveUpdateDestroyAPIView):
-  queryset = Category.objects.all()
-  serializer_class = CategoryViewSerializer
+class FolderRetrieveView(generics.RetrieveUpdateDestroyAPIView):
+  queryset = Folder.objects.all()
+  serializer_class = FolderViewSerializer
 
 # User API
 class UserRetrieveUpdateView(generics.RetrieveUpdateAPIView):
