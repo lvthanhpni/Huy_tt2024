@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { checkAuthorization } from "@/utils/authorization";
+import Image from "next/image";
 
 const navigation_left = [
   { title: "Công trình tiêu biểu", link: "/" },
@@ -23,13 +24,16 @@ interface IUserInformation {
   name: string;
   email: string;
   phone_number: string;
+  avatar: string;
 }
 
 function NavigationBar() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [user, setUser] = useState<IUserInformation>();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleLogout = () => {
+    console.log("logout");
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
     setIsAuthorized(false);
@@ -40,6 +44,7 @@ function NavigationBar() {
       const { isAuthorized, user } = await checkAuthorization();
       setIsAuthorized(isAuthorized);
       setUser(user);
+      console.log(user);
     };
     getUserInformation();
   }, []);
@@ -61,10 +66,39 @@ function NavigationBar() {
         <div className="px-[15px] flex">
           {isAuthorized && user ? (
             <div
-              onClick={handleLogout}
-              className="flex cursor-pointer items-center"
+              className="flex items-center relative"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
-              Welcome, {user.name}
+              <div className="flex items-center cursor-pointer hover:bg-[#233975] p-[5px] duration-200">
+                <Image
+                  src={process.env.NEXT_PUBLIC_API_SERVER + user?.avatar}
+                  alt="avatar"
+                  width={30}
+                  height={30}
+                  className="w-[30px] h-[30px] rounded-full mr-[10px]"
+                />
+                <div>
+                  <p>{user.name}</p>
+                </div>
+              </div>
+              <div
+                className={`absolute bg-white top-[49px] duration-500 overflow-hidden flex flex-col justify-around text-[#1b2c5a] w-fit text-[16px] ${
+                  isDropdownOpen ? "h-[82px] border-2" : "h-0 border-0"
+                }`}
+              >
+                <div
+                  onClick={() => (window.location.href = "/profile")}
+                  className="px-[24px] py-[4px] cursor-pointer hover:bg-gray-200"
+                >
+                  <p>Thông tin tài khoản</p>
+                </div>
+                <div
+                  onClick={handleLogout}
+                  className="px-[24px] py-[4px] cursor-pointer hover:bg-gray-200"
+                >
+                  <a>Đăng xuất</a>
+                </div>
+              </div>
             </div>
           ) : (
             navigation_right.map((item) => (

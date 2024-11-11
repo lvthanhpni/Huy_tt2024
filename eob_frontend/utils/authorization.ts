@@ -2,10 +2,10 @@ import { CredentialResponse } from "@react-oauth/google";
 import axios from "axios";
 
 const refreshAccessToken = async () => {
-  const refreshToken = localStorage.getItem("access");
+  const refreshToken = localStorage.getItem("refresh");
   try {
     const response = await axios.post(
-      "http://localhost:8000/api/token/refresh/",
+      process.env.NEXT_PUBLIC_API_URL + "/token/refresh/",
       {
         refresh: refreshToken,
       }
@@ -22,16 +22,20 @@ const refreshAccessToken = async () => {
 export const checkAuthorization = async () => {
   let access_token = localStorage.getItem("access");
   try {
-    const response = await axios.get("http://localhost:8000/api/user/", {
-      headers: { Authorization: `Bearer ${access_token}` },
-    });
+    const response = await axios.get(
+      process.env.NEXT_PUBLIC_API_URL + "/user/",
+      {
+        headers: { Authorization: `Bearer ${access_token}` },
+      }
+    );
     return { isAuthorized: true, user: response.data };
   } catch (err) {
+    console.log(err);
     if (axios.isAxiosError(err) && err.response?.status === 401) {
       access_token = await refreshAccessToken();
       if (access_token) {
         const retryResponse = await axios.get(
-          "http://localhost:8000/api/user/",
+          process.env.NEXT_PUBLIC_API_URL + "/user/",
           { headers: { Authorization: `Bearer ${access_token}` } }
         );
         return { isAuthorized: true, user: retryResponse.data };
@@ -45,9 +49,12 @@ export const checkAuthorization = async () => {
 
 export const getCSRFToken = async () => {
   try {
-    const response = await axios.get("http://localhost:8000/api/csrf_token/", {
-      withCredentials: true,
-    });
+    const response = await axios.get(
+      process.env.NEXT_PUBLIC_API_URL + "/csrf_token/",
+      {
+        withCredentials: true,
+      }
+    );
     return response.data.csrfToken; // Trả về giá trị csrfToken từ response
   } catch (error) {
     console.log("Error fetching CSRF Token:", error);
@@ -60,7 +67,7 @@ export const responseGoogle = async (
 ) => {
   try {
     const response = await axios.post(
-      "http://localhost:8000/api/auth/google/",
+      process.env.NEXT_PUBLIC_API_URL + "/auth/google/",
       {
         access_token: credentialResponse.credential,
       }

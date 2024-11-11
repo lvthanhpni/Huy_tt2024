@@ -1,3 +1,4 @@
+"use client";
 import "./globals.css";
 import logo from "../public/assets/images/logo.png";
 import Image from "next/image";
@@ -13,6 +14,7 @@ import {
   DropdownIcon,
 } from "../public/assets/svg";
 import NavigationBar from "@/components/Layout/NavigationBar";
+import { useState } from "react";
 
 const footer_navigation = [
   {
@@ -50,6 +52,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const handleClickDropDown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
   return (
     <html lang="en">
       <title>EOB</title>
@@ -67,21 +74,31 @@ export default function RootLayout({
                 />
               </a>
               <div className="relative px-[20px] py-[10px] ml-[58px]">
-                <p className="uppercase font-bold text-[#1c2d5a] flex">
+                <p
+                  onClick={handleClickDropDown}
+                  className="uppercase font-bold text-[#1c2d5a] flex cursor-pointer"
+                >
                   Thư viện Model
                   <DropdownIcon className="w-[24px] h-[24px] ml-[5px]" />
                 </p>
-                {/* <div className="absolute w-full text-[#263d7d] flex flex-col items-center right-0 top-[40px] bg-white border-[1px] border-gray-300 py-[8px]">
-                  <a href="" className="py-[4px]">
+                <div
+                  style={{
+                    height: isDropdownOpen ? "124px" : "0",
+                    borderWidth: isDropdownOpen ? "1px" : "0",
+                    padding: isDropdownOpen ? "5px 0px" : "0px 0px",
+                  }}
+                  className="absolute w-full text-[#263d7d] duration-500 overflow-hidden flex flex-col items-center right-0 top-[40px] bg-white border-[1px] border-gray-300"
+                >
+                  <a href="/family-eob" className="py-[7px]">
                     <p>Tất cả thư viện</p>
                   </a>
-                  <a href="" className="py-[4px]">
+                  <a href="/family-eob" className="py-[7px]">
                     <p>Thư viện EOB</p>
                   </a>
-                  <a href="" className="py-[4px]">
+                  <a href="/family-eob" className="py-[7px]">
                     Thư viện VLXD
                   </a>
-                </div> */}
+                </div>
               </div>
             </div>
             <div className="px-[15px] flex items-center flex-1 justify-end">

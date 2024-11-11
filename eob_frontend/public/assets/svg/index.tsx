@@ -7,3 +7,6 @@ export { default as SearchIcon } from "./SearchIcon";
 export { default as InstagramIcon } from "./InstagramIcon";
 export { default as LinkedInIcon } from "./LinkedInIcon";
 export { default as DropdownIcon } from "./DropdownIcon";
+export { default as FolderIcon } from "./FolderIcon";
+export { default as FolderArrow } from "./FolderArrow";
+export { default as CameraIcon } from "./CameraIcon";
