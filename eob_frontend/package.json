@@ -9,9 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@mui/material": "^6.1.6",
+=======
+>>>>>>> b8884514466f89ab739a87b3dcfdceeb403ce8d6
     "@react-oauth/google": "^0.12.1",
     "axios": "^1.7.7",
     "jwt-decode": "^4.0.0",

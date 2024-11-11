@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from .models import Category, CustomUser, IndividualUser, Occupation, OrganizationUser, MaterialCategory
+=======
+from .models import CustomUser, IndividualUser, MaterialUser, OrganizationUser
+>>>>>>> b8884514466f89ab739a87b3dcfdceeb403ce8d6
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 
@@ -6,12 +10,21 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=255, write_only=True)
 
     tax_code = serializers.CharField(max_length=16, required=False)
+<<<<<<< HEAD
     occupation = serializers.CharField(max_length=255, required=False)
     phone_number = serializers.CharField(max_length=16, required=False)
     user_rank = serializers.IntegerField(default=0, read_only=True)
     class Meta:
         model = CustomUser
         fields = ['name', 'tax_code', 'email', 'password', 'phone_number', 'occupation', 'user_rank']
+=======
+    company_name = serializers.CharField(max_length=255, required=False)
+    occupation = serializers.CharField(max_length=255, required=False)
+
+    class Meta:
+        model = CustomUser
+        fields = ['name', 'organization_name', 'tax_code', 'email', 'password', 'phone_number','company_name', 'occupation']
+>>>>>>> b8884514466f89ab739a87b3dcfdceeb403ce8d6
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -22,16 +35,28 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
         user_rank = 0
 
+        company_name = validated_data.pop('company_name', None)
+        occupation = validated_data.pop('occupation', None)
+
         password = validated_data.pop('password', None)
 
         user = CustomUser.objects.create_user(email=validated_data['email'], password=password, name=name, user_rank=user_rank)
         user.set_password(password)
         user.save()
 
+<<<<<<< HEAD
         if tax_code:
             OrganizationUser.objects.create(user=user, phone_number=phone_number, organization_name=organization_name, tax_code=tax_code)
         else:
             IndividualUser.objects.create(user=user, phone_number=phone_number)
+=======
+        if name:
+            IndividualUser.objects.create(user=user, name=name)
+        if tax_code and organization_name:
+            OrganizationUser.objects.create(user=user, organization_name=organization_name, tax_code=tax_code)
+        if company_name and occupation:
+            MaterialUser.objects.create(user=user, company_name=company_name, occupation=occupation)
+>>>>>>> b8884514466f89ab739a87b3dcfdceeb403ce8d6
         return user
     
 class UserLoginSerializer(serializers.Serializer):

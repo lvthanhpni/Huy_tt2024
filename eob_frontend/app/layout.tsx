@@ -1,4 +1,3 @@
-"use client";
 import "./globals.css";
 import logo from "../public/assets/images/logo.png";
 import Image from "next/image";
@@ -14,7 +13,10 @@ import {
   DropdownIcon,
 } from "../public/assets/svg";
 import NavigationBar from "@/components/Layout/NavigationBar";
+<<<<<<< HEAD
 import { useState } from "react";
+=======
+>>>>>>> b8884514466f89ab739a87b3dcfdceeb403ce8d6
 
 const footer_navigation = [
   {
@@ -52,11 +54,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+<<<<<<< HEAD
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const handleClickDropDown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+=======
+>>>>>>> b8884514466f89ab739a87b3dcfdceeb403ce8d6
   return (
     <html lang="en">
       <title>EOB</title>

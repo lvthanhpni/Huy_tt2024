@@ -68,11 +68,6 @@ class Migration(migrations.Migration):
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
-        migrations.AddField(
-            model_name='customuser',
-            name='occupation',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='eob_website.occupation'),
-        ),
         migrations.CreateModel(
             name='OrganizationUser',
             fields=[
