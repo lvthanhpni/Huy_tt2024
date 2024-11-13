@@ -131,7 +131,7 @@ class OrganizationUserSerializer(serializers.ModelSerializer):
 class FolderViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Folder
-        fields = ['id','name', 'parent', 'children']
+        fields = ['id','name', 'folder_type', 'parent', 'children', 'is_root']
     
     def get_children(self, obj):
         return FolderViewSerializer(obj.children.all(), many=True).data
