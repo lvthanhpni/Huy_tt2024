@@ -1,6 +1,6 @@
 from django.urls import path, include
 
-from .views import UserRetrieveUpdateView, FolderRetrieveView, FolderViewSet, OccupationListCreateView, RegisterView, LoginView , get_csrf_token, GoogleLoginView
+from .views import UserRetrieveUpdateView, MaterialListCreateView, FolderRetrieveView, FolderViewSet, OccupationListCreateView, RegisterView, LoginView , get_csrf_token, GoogleLoginView
 
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -14,4 +14,5 @@ urlpatterns = [
   path('folder/', FolderViewSet.as_view(), name='folder'),
   path('folder/<int:pk>/', FolderRetrieveView.as_view(), name='folder'),
   path('occupation/', OccupationListCreateView.as_view(), name='occupation'),
+  path('files/', MaterialListCreateView.as_view(), name='files'),
 ]

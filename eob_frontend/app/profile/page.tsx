@@ -10,7 +10,6 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { TextareaAutosize } from "@mui/base/TextareaAutosize";
 import avatar_alt from "@/public/assets/images/avatar-alt.png";
 import { CameraIcon } from "@/public/assets/svg";
 import axios from "axios";
@@ -130,7 +129,7 @@ function ProfilePage() {
         );
         setFolderListData(response.data);
         setRootFolder(
-          response.data.reduce((min, item) => {
+          response.data.reduce((min: number, item: IFolderItems) => {
             return item.id < min ? item.id : min;
           })
         );

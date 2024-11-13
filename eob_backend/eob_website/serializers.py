@@ -1,4 +1,4 @@
-from .models import Folder, CustomUser, IndividualUser, Occupation, OrganizationUser
+from .models import Folder, CustomUser, IndividualUser, Occupation, OrganizationUser, Material
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 
@@ -84,18 +84,6 @@ class IndividualUserSerializer(serializers.ModelSerializer):
         user.occupation = user_data.get('occupation', user.occupation)
         user.save()
         
-        # Lấy thông tin của người dùng (CustomUser) từ validated_data
-        # user_data = validated_data.pop('user', {})
-
-        # # Cập nhật thông tin của CustomUser
-        # user = instance.user
-        # user.name = user_data.get('name', user.name)
-        # user.avatar = user_data.get('avatar', user.avatar)
-        # user_rank = user_data.get('user_rank', user.user_rank)  # Cập nhật user_rank nếu có
-        # user.occupation = user_data.get('occupation', user.occupation)
-        # user.user_rank = user_rank  # Cập nhật user_rank cho CustomUser
-        # user.save()
-
         instance.phone_number = validated_data.get('phone_number', instance.phone_number)
         instance.organization = validated_data.get('organization', instance.organization)
         instance.organization_name = validated_data.get('organization_name', instance.organization_name)
@@ -140,3 +128,37 @@ class OccupationCreateViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Occupation
         fields = ['id','name']
+
+class MaterialUploadViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Material
+        fields = ['name', 'file', 'folder_id', 'description', 'preview_image', 'material_type', 'software']
+
+    def create(self, validated_data):
+        file = validated_data.pop('file', None)
+        folder_id = validated_data.pop('folder_id', None)
+        description = validated_data.pop('description', None)
+        preview_image = validated_data.pop('preview_image', None)
+        material_type = validated_data.pop('material_type', None)
+        software = validated_data.pop('software', None)
+        create_user = self.context['request'].user
+
+        if folder_id is not None:
+            try:
+                folder = Folder.objects.get(id=folder_id)  # Thay thế 'Folder' bằng tên model thư mục của bạn nếu khác
+            except Folder.DoesNotExist:
+                raise serializers.ValidationError("Folder not found.")
+        else:
+            folder = None
+
+        material = Material.objects.create(
+            file=file,
+            folder=folder,
+            description=description,
+            preview_image=preview_image,
+            material_type=material_type,
+            software=software,
+            create_user=create_user
+        )
+        return material
+

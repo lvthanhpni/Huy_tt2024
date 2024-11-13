@@ -96,8 +96,8 @@ class Material(models.Model):
   download_count = models.IntegerField(default=0)
   create_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
   folder_id = models.ForeignKey('Folder', on_delete=models.CASCADE, default=1)
-  description = models.TextField()
-  upload_date = models.DateTimeField(auto_now_add=True)
+  description = models.TextField(null=True, blank=True)
+  upload_date = models.DateTimeField(null=True, blank=True, auto_now_add=True)
 
 class Occupation(models.Model):
   name = models.CharField(max_length=255)
