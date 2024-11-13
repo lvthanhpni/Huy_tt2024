@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { checkAuthorization } from "@/utils/authorization";
+import avatar_alt from "@/public/assets/images/avatar-alt.png";
 import Image from "next/image";
 
 const navigation_left = [
@@ -71,7 +72,11 @@ function NavigationBar() {
             >
               <div className="flex items-center cursor-pointer hover:bg-[#233975] p-[5px] duration-200">
                 <Image
-                  src={process.env.NEXT_PUBLIC_API_SERVER + user?.avatar}
+                  src={
+                    user?.avatar
+                      ? process.env.NEXT_PUBLIC_API_SERVER + user?.avatar
+                      : avatar_alt
+                  }
                   alt="avatar"
                   width={30}
                   height={30}

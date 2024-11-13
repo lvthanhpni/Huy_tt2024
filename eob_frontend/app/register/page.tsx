@@ -25,10 +25,6 @@ function RegisterPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [fullName, setFullName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-<<<<<<< HEAD
-=======
-  const [organizationName, setOrganizationName] = useState("");
->>>>>>> b8884514466f89ab739a87b3dcfdceeb403ce8d6
   const [taxcode, setTaxcode] = useState("");
   const [isIndividual, setIsIndividual] = useState(true);
   const [, setIsAuthorized] = useState(false);
@@ -52,10 +48,6 @@ function RegisterPage() {
     data.append("password", password);
     data.append("phone_number", phoneNumber);
     data.append("name", fullName);
-<<<<<<< HEAD
-=======
-    data.append("organization_name", organizationName);
->>>>>>> b8884514466f89ab739a87b3dcfdceeb403ce8d6
     data.append("tax_code", taxcode);
 
     if (password !== confirmPassword) {
@@ -69,7 +61,7 @@ function RegisterPage() {
         localStorage.setItem("access", response.data.access);
         localStorage.setItem("refresh", response.data.refreshToken);
         alert("Đăng ký thành công");
-        router.push("/");
+        window.location.href = "/";
       } catch (error) {
         console.log(error);
       }
@@ -116,7 +108,6 @@ function RegisterPage() {
               onSubmit={(e) => handleRegister(e)}
               className="flex flex-col w-full px-[24px] gap-[16px]"
             >
-<<<<<<< HEAD
               <div className="py-[10px] px-[14px] h-[52px] border-2 border-[#dbe0de] flex items-center">
                 <input
                   className="focus-visible:outline-none"
@@ -136,39 +127,6 @@ function RegisterPage() {
                     placeholder="Mã số thuế"
                   />
                 </div>
-=======
-              {isIndividual ? (
-                <div className="py-[10px] px-[14px] h-[52px] border-2 border-[#dbe0de] flex items-center">
-                  <input
-                    className="focus-visible:outline-none"
-                    onChange={(e) => {
-                      console.log(e.target.value);
-                      setFullName(e.target.value);
-                    }}
-                    type="text"
-                    placeholder="Họ và tên"
-                  />
-                </div>
-              ) : (
-                <>
-                  <div className="py-[10px] px-[14px] h-[52px] border-2 border-[#dbe0de] flex items-center">
-                    <input
-                      className="focus-visible:outline-none"
-                      onChange={(e) => setOrganizationName(e.target.value)}
-                      type="text"
-                      placeholder="Tên tổ chức"
-                    />
-                  </div>
-                  <div className="py-[10px] px-[14px] h-[52px] border-2 border-[#dbe0de] flex items-center">
-                    <input
-                      className="focus-visible:outline-none"
-                      onChange={(e) => setTaxcode(e.target.value)}
-                      type="text"
-                      placeholder="Mã số thuế"
-                    />
-                  </div>
-                </>
->>>>>>> b8884514466f89ab739a87b3dcfdceeb403ce8d6
               )}
               <div className="py-[10px] px-[14px] h-[52px] border-2 border-[#dbe0de] flex items-center">
                 <input

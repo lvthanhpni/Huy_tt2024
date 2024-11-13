@@ -6,7 +6,7 @@ function SearchSection() {
   const [searchFolder, setSearchFolder] = React.useState("Tất cả NCC");
   return (
     <div
-      className="h-[484px] flex items-end "
+      className="h-[484px] flex items-end"
       style={{
         background: `url(${bg_search.src}) no-repeat center center/cover`,
       }}

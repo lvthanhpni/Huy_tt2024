@@ -10,10 +10,13 @@ import {
   Select,
   TextField,
 } from "@mui/material";
+import { TextareaAutosize } from "@mui/base/TextareaAutosize";
 import avatar_alt from "@/public/assets/images/avatar-alt.png";
 import { CameraIcon } from "@/public/assets/svg";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { IFolderItems } from "@/utils/interfaces";
+import FolderList from "@/components/FamilyLibrary/FolderList";
 
 interface IUser {
   avatar: string;
@@ -30,6 +33,8 @@ interface IOccupation {
   name: string;
 }
 
+const software = ["Revit", "Auto CAD", "Sketch UP", "Archi CAD", "Tekla"];
+
 const organization = [
   "Trường Đại học Sư phạm",
   "Trường Đại học Công nghệ",
@@ -40,6 +45,8 @@ const organization = [
 
 const member_rank = ["Star", "Pro"];
 
+const materialType = ["Kiến trúc", "Kết cấu", "MEP"];
+
 function ProfilePage() {
   const [user, setUser] = useState<IUser | null>(null);
   const [downloadMonth, setDownloadMonth] = useState(3);
@@ -49,6 +56,16 @@ function ProfilePage() {
       id: 0,
       name: "Chưa có update",
     },
+  ]);
+  const [rootFolder, setRootFolder] = useState({
+    id: 0,
+    name: "root",
+    children: [],
+  });
+  const [choosenFolderId, setChoosenFolderId] = useState(0);
+
+  const [folderListData, setFolderListData] = useState<IFolderItems[]>([
+    { id: 0, name: "root", children: [] },
   ]);
   const [avatar, setAvatar] = useState<string | File | null>(null);
   const router = useRouter();
@@ -106,7 +123,22 @@ function ProfilePage() {
       setOccupations(response.data);
       console.log(response.data);
     };
-
+    const fetchFolderData = async () => {
+      try {
+        const response = await axios.get(
+          process.env.NEXT_PUBLIC_API_URL + "/folder"
+        );
+        setFolderListData(response.data);
+        setRootFolder(
+          response.data.reduce((min, item) => {
+            return item.id < min ? item.id : min;
+          })
+        );
+      } catch {
+        console.log("Error fetching folder data");
+      }
+    };
+    fetchFolderData();
     getOccupations();
   }, []);
 
@@ -285,6 +317,96 @@ function ProfilePage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+        <div className="mt-[48px] max-w-[1200px] w-full">
+          <p className="text-[20px] font-bold text-[#1b2c5a] uppercase">
+            Upload file
+          </p>
+          <div className="mb-[16px] flex">
+            <div>
+              <div className="">
+                <input type="text" className="border-2 mb-[10px] h-[40px]" />
+                <button className="text-white bg-[#1b2c5a] px-[15px] h-[40px]">
+                  Thư mục mới
+                </button>
+                <button className="text-white bg-red-600 px-[15px] h-[40px]">
+                  Xóa
+                </button>
+              </div>
+              <div className="w-[400px] p-[8px] border-[#dbe0de] border-[1px] h-fit">
+                <FolderList
+                  data={folderListData}
+                  level={rootFolder.id}
+                  setChoosenFolderId={setChoosenFolderId}
+                  choosenFolderId={choosenFolderId}
+                />
+              </div>
+            </div>
+            <div className="flex-1">
+              <div className="flex flex-col p-[20px] gap-[10px]">
+                <TextField
+                  className="mb-[10px]"
+                  label="Tên file thiết kế"
+                  variant="outlined"
+                />
+                <FormControl fullWidth>
+                  <InputLabel id="software-label">Phần mềm thiết kế</InputLabel>
+                  <Select
+                    defaultValue={"Revit"}
+                    labelId="software-label"
+                    label="Phần mềm thiết kế"
+                  >
+                    {software.map((value, index) => {
+                      return (
+                        <MenuItem key={index} value={value}>
+                          {value}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+                <FormControl fullWidth>
+                  <InputLabel id="material-type-label">
+                    Loại vật liệu
+                  </InputLabel>
+                  <Select
+                    defaultValue={"Kiến trúc"}
+                    labelId="material-type-label"
+                    label="Loại vật liệu"
+                  >
+                    {materialType.map((value, index) => {
+                      return (
+                        <MenuItem key={index} value={value}>
+                          {value}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+                <label htmlFor="preview-image">Hình Preview</label>
+                <input id="preview-image" accept="image/*" type="file" />
+                <label htmlFor="design-file">File Upload</label>
+                <input
+                  id="design-file"
+                  type="file"
+                  accept=".rvt,.dwg,.dxf,.skp,.pln,.mod,.teklastructures"
+                />
+                <label htmlFor="description">Mô tả</label>
+                <textarea
+                  id="description"
+                  className="border-2 border-gray-200"
+                ></textarea>
+                <div className="flex justify-end gap-[10px]">
+                  <button className="px-[10px] py-[5px] bg-[#1b2c5a] text-white">
+                    Upload
+                  </button>
+                  <button className="px-[10px] py-[5px] bg-red-700 text-white">
+                    Hủy bỏ
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div className="mt-[48px] max-w-[800px] w-full">

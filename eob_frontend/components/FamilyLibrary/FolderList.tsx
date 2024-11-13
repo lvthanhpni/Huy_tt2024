@@ -7,17 +7,26 @@ function FolderList({
   data,
   level,
   setIsLastFolder,
+  setChoosenFolderId,
+  choosenFolderId,
 }: {
   data: IFolderItems[];
   level: number;
-  setIsLastFolder: Dispatch<SetStateAction<boolean>>;
+  setIsLastFolder?: Dispatch<SetStateAction<boolean>>;
+  setChoosenFolderId?: Dispatch<SetStateAction<number>>;
+  choosenFolderId?: number;
 }) {
   const [isFolderOpen, setIsFolderOpen] = useState(false);
   const handleFolderClick = () => {
     setIsFolderOpen(!isFolderOpen);
+    if (setChoosenFolderId) {
+      setChoosenFolderId(level);
+    }
     const clickedFolder = data.find((folder) => folder.id === level);
     const hasChildren = clickedFolder && clickedFolder.children.length > 0;
-    setIsLastFolder(!hasChildren);
+    if (setIsLastFolder) {
+      setIsLastFolder(!hasChildren);
+    }
   };
 
   return (
@@ -28,7 +37,9 @@ function FolderList({
             return (
               <div
                 onClick={handleFolderClick}
-                className="flex h-[24px] items-center cursor-pointer hover:bg-gray-200"
+                className={`flex h-[24px] items-center cursor-pointer ${
+                  choosenFolderId === folder.id ? "bg-blue-300" : ""
+                } hover:bg-gray-200`}
                 key={index}
               >
                 {folder.children.length > 0 && (
@@ -55,6 +66,8 @@ function FolderList({
                 data={data}
                 level={child}
                 setIsLastFolder={setIsLastFolder}
+                setChoosenFolderId={setChoosenFolderId}
+                choosenFolderId={choosenFolderId}
               />
             </Collapse>
           ));
