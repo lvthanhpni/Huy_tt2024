@@ -1,7 +1,7 @@
 import { CredentialResponse } from "@react-oauth/google";
 import axios from "axios";
 
-const refreshAccessToken = async () => {
+export const refreshAccessToken = async () => {
   const refreshToken = localStorage.getItem("refresh");
   try {
     const response = await axios.post(

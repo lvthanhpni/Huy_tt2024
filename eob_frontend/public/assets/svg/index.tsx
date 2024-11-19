@@ -10,3 +10,5 @@ export { default as DropdownIcon } from "./DropdownIcon";
 export { default as FolderIcon } from "./FolderIcon";
 export { default as FolderArrow } from "./FolderArrow";
 export { default as CameraIcon } from "./CameraIcon";
+export { default as AddButtonIcon } from "./AddButtonIcon";
+export { default as CloseButtonIcon } from "./CloseButtonIcon";

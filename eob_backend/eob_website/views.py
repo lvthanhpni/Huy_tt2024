@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import Folder, Occupation, Material,  OrganizationUser, CustomUser, IndividualUser
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import FolderViewSerializer, MaterialUploadViewSerializer, OccupationCreateViewSerializer, UserLoginSerializer, UserRegisterSerializer, OrganizationUserSerializer, IndividualUserSerializer
+from .serializers import FolderViewSerializer, FolderCreateSerializer, MaterialUploadViewSerializer, OccupationCreateViewSerializer, UserLoginSerializer, UserRegisterSerializer, OrganizationUserSerializer, IndividualUserSerializer
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -72,11 +72,18 @@ class RegisterView(generics.CreateAPIView):
 #Folder API
 class FolderViewSet(generics.ListCreateAPIView):
   queryset = Folder.objects.all()
-  serializer_class = FolderViewSerializer
+
+  def get_serializer_class(self):
+    if self.request.method == 'POST':
+      return FolderCreateSerializer 
+    return FolderViewSerializer
 
 class FolderRetrieveView(generics.RetrieveUpdateDestroyAPIView):
   queryset = Folder.objects.all()
   serializer_class = FolderViewSerializer
+
+  def perform_create(self, serializer):
+    serializer.save(owner=self.request.user)
 
 # User API
 class UserRetrieveUpdateView(generics.RetrieveUpdateAPIView):
@@ -143,13 +150,15 @@ class OccupationListCreateView(generics.ListCreateAPIView):
 
 class MaterialListCreateView(generics.ListCreateAPIView):
   queryset= Material.objects.all()
-  serializer_class = MaterialUploadViewSerializer()
+  serializer_class = MaterialUploadViewSerializer
+  permission_classes = [IsAuthenticated]
 
   def get(self, request):
     materials = Material.objects.all()
     serializer = MaterialUploadViewSerializer(materials, many=True)
     return Response(serializer.data)
   
+
   def put(self, request):
     serializer = MaterialUploadViewSerializer(data=request.data)
     if serializer.is_valid():

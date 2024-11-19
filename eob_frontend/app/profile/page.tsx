@@ -1,5 +1,5 @@
 "use client";
-import { checkAuthorization } from "@/utils/authorization";
+import { checkAuthorization, refreshAccessToken } from "@/utils/authorization";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import logo from "@/public/assets/images/logo.png";
@@ -32,7 +32,7 @@ interface IOccupation {
   name: string;
 }
 
-const software = ["Revit", "Auto CAD", "Sketch UP", "Archi CAD", "Tekla"];
+const software_list = ["Revit", "Auto CAD", "Sketch UP", "Archi CAD", "Tekla"];
 
 const organization = [
   "Trường Đại học Sư phạm",
@@ -44,7 +44,7 @@ const organization = [
 
 const member_rank = ["Star", "Pro"];
 
-const materialType = ["Kiến trúc", "Kết cấu", "MEP"];
+const material_type_list = ["Kiến trúc", "Kết cấu", "MEP"];
 
 function ProfilePage() {
   const [user, setUser] = useState<IUser | null>(null);
@@ -61,13 +61,68 @@ function ProfilePage() {
     name: "root",
     children: [],
   });
-  const [choosenFolderId, setChoosenFolderId] = useState(0);
 
+  const [chosenFolder, setChosenFolder] = useState<IFolderItems | null>(null);
+  const [isUploadAvailable, setIsUploadAvailable] = useState(false);
   const [folderListData, setFolderListData] = useState<IFolderItems[]>([
-    { id: 0, name: "root", children: [] },
+    {
+      id: 0,
+      name: "root",
+      children: [],
+      is_root: true,
+      can_upload: false,
+      owner: 1,
+    },
   ]);
   const [avatar, setAvatar] = useState<string | File | null>(null);
+  const [fileName, setFileName] = useState<string>("");
+  const [software, setSoftware] = useState<string>("");
+  const [materialType, setMaterialType] = useState<string>("");
+  const [previewImage, setPreviewImage] = useState<File | null>(null);
+  const [fileUpload, setFileUpload] = useState<File | null>(null);
+  const [description, setDescription] = useState<string>("");
+  const [folderName, setFolderName] = useState<string>("");
+  const [canDelete, setCanDelete] = useState(false);
+
   const router = useRouter();
+
+  const fetchFolderData = async () => {
+    try {
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_API_URL + "/folder"
+      );
+      setFolderListData(response.data);
+      setRootFolder(
+        response.data.reduce((min: number, item: IFolderItems) => {
+          return item.id < min ? item.id : min;
+        })
+      );
+    } catch {
+      console.log("Error fetching folder data");
+    }
+  };
+
+  const handleCreateFolder = (e: React.MouseEvent<HTMLButtonElement>) => {
+    try {
+      const response = axios.post(
+        process.env.NEXT_PUBLIC_API_URL + "/folder/",
+        {
+          name: folderName,
+          parent: chosenFolder?.id,
+          is_root: false,
+          can_upload: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access")}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+    fetchFolderData();
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files?.[0];
@@ -75,6 +130,52 @@ function ProfilePage() {
       setAvatar(files);
       setAvatarPreview(URL.createObjectURL(files)); // Preview image
     }
+  };
+
+  const handleDeleteFolder = async () => {
+    refreshAccessToken();
+    console.log(chosenFolder);
+    if (canDelete) {
+      try {
+        const response = await axios.delete(
+          process.env.NEXT_PUBLIC_API_URL + `/folder/${chosenFolder?.id}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access")}`,
+            },
+          }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    fetchFolderData();
+  };
+
+  const handleUpload = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const data = new FormData();
+    data.append("name", fileName);
+    data.append("folder_id", chosenFolder?.id.toString() || "1");
+    data.append("description", description);
+    data.append("software", software);
+    data.append("material_type", materialType);
+    if (previewImage) {
+      data.append("preview_image", previewImage);
+    }
+    if (fileUpload) {
+      data.append("file_upload", fileUpload);
+    }
+    data.forEach((value, key) => {
+      console.log(`${key}: ${value}`);
+    });
+    checkAuthorization();
+    axios.post(process.env.NEXT_PUBLIC_API_URL + "/files/", data, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access")}`,
+      },
+    });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -120,23 +221,8 @@ function ProfilePage() {
         process.env.NEXT_PUBLIC_API_URL + "/occupation"
       );
       setOccupations(response.data);
-      console.log(response.data);
     };
-    const fetchFolderData = async () => {
-      try {
-        const response = await axios.get(
-          process.env.NEXT_PUBLIC_API_URL + "/folder"
-        );
-        setFolderListData(response.data);
-        setRootFolder(
-          response.data.reduce((min: number, item: IFolderItems) => {
-            return item.id < min ? item.id : min;
-          })
-        );
-      } catch {
-        console.log("Error fetching folder data");
-      }
-    };
+
     fetchFolderData();
     getOccupations();
   }, []);
@@ -324,87 +410,147 @@ function ProfilePage() {
           </p>
           <div className="mb-[16px] flex">
             <div>
-              <div className="">
-                <input type="text" className="border-2 mb-[10px] h-[40px]" />
-                <button className="text-white bg-[#1b2c5a] px-[15px] h-[40px]">
-                  Thư mục mới
-                </button>
-                <button className="text-white bg-red-600 px-[15px] h-[40px]">
-                  Xóa
-                </button>
-              </div>
+              <input
+                placeholder="Tên thư mục mới"
+                type="text"
+                className="border-2 mb-[10px] h-[40px]"
+                onChange={(e) => setFolderName(e.target.value)}
+              />
+              <button
+                onClick={handleCreateFolder}
+                disabled={!isUploadAvailable}
+                className={`text-white bg-[#1b2c5a] px-[15px] h-[40px] ${
+                  isUploadAvailable
+                    ? "text-[#b4b4b4] bg-[#1b2c5a]"
+                    : "text-white bg-[#f3f3f3]"
+                }`}
+              >
+                Thư mục mới
+              </button>
+              <button
+                onClick={handleDeleteFolder}
+                className={`text-white bg-red-600 px-[15px] h-[40px] ${
+                  canDelete
+                    ? "text-white bg-red-600"
+                    : "text-white bg-[#ffadad]"
+                }`}
+              >
+                Xóa
+              </button>
               <div className="w-[400px] p-[8px] border-[#dbe0de] border-[1px] h-fit">
                 <FolderList
                   data={folderListData}
                   level={rootFolder.id}
-                  setChoosenFolderId={setChoosenFolderId}
-                  choosenFolderId={choosenFolderId}
+                  setIsUploadAvailable={setIsUploadAvailable}
+                  chosenFolder={chosenFolder}
+                  setChosenFolder={setChosenFolder}
+                  setCanDelete={setCanDelete}
                 />
               </div>
             </div>
             <div className="flex-1">
-              <div className="flex flex-col p-[20px] gap-[10px]">
-                <TextField
-                  className="mb-[10px]"
-                  label="Tên file thiết kế"
-                  variant="outlined"
-                />
-                <FormControl fullWidth>
-                  <InputLabel id="software-label">Phần mềm thiết kế</InputLabel>
-                  <Select
-                    defaultValue={"Revit"}
-                    labelId="software-label"
-                    label="Phần mềm thiết kế"
-                  >
-                    {software.map((value, index) => {
-                      return (
-                        <MenuItem key={index} value={value}>
-                          {value}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
-                <FormControl fullWidth>
-                  <InputLabel id="material-type-label">
-                    Loại vật liệu
-                  </InputLabel>
-                  <Select
-                    defaultValue={"Kiến trúc"}
-                    labelId="material-type-label"
-                    label="Loại vật liệu"
-                  >
-                    {materialType.map((value, index) => {
-                      return (
-                        <MenuItem key={index} value={value}>
-                          {value}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
-                <label htmlFor="preview-image">Hình Preview</label>
-                <input id="preview-image" accept="image/*" type="file" />
-                <label htmlFor="design-file">File Upload</label>
-                <input
-                  id="design-file"
-                  type="file"
-                  accept=".rvt,.dwg,.dxf,.skp,.pln,.mod,.teklastructures"
-                />
-                <label htmlFor="description">Mô tả</label>
-                <textarea
-                  id="description"
-                  className="border-2 border-gray-200"
-                ></textarea>
-                <div className="flex justify-end gap-[10px]">
-                  <button className="px-[10px] py-[5px] bg-[#1b2c5a] text-white">
-                    Upload
-                  </button>
-                  <button className="px-[10px] py-[5px] bg-red-700 text-white">
-                    Hủy bỏ
-                  </button>
+              <form onSubmit={handleUpload}>
+                <div className="flex flex-col p-[20px] gap-[10px]">
+                  <TextField
+                    className="mb-[10px]"
+                    label="Tên file thiết kế"
+                    variant="outlined"
+                    onChange={(e) => {
+                      setFileName(e.target.value);
+                    }}
+                  />
+                  <FormControl fullWidth>
+                    <InputLabel id="software-label">
+                      Phần mềm thiết kế
+                    </InputLabel>
+                    <Select
+                      defaultValue={"Revit"}
+                      labelId="software-label"
+                      label="Phần mềm thiết kế"
+                      onChange={(e) => {
+                        setSoftware(e.target.value);
+                      }}
+                    >
+                      {software_list.map((value, index) => {
+                        return (
+                          <MenuItem key={index} value={value}>
+                            {value}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
+                  <FormControl fullWidth>
+                    <InputLabel id="material-type-label">
+                      Loại vật liệu
+                    </InputLabel>
+                    <Select
+                      defaultValue={"Kiến trúc"}
+                      labelId="material-type-label"
+                      label="Loại vật liệu"
+                      onChange={(e) => setMaterialType(e.target.value)}
+                    >
+                      {material_type_list.map((value, index) => {
+                        return (
+                          <MenuItem key={index} value={value}>
+                            {value}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
+                  <label htmlFor="preview-image">Hình Preview</label>
+                  <input
+                    onChange={(e) => {
+                      const file = e.target.files && e.target.files[0]; // Lấy file đầu tiên
+                      if (file) {
+                        setPreviewImage(file);
+                      } else {
+                        setPreviewImage(null);
+                      }
+                    }}
+                    id="preview-image"
+                    accept="image/*"
+                    type="file"
+                  />
+                  <label htmlFor="design-file">File Upload</label>
+                  <input
+                    onChange={(e) => {
+                      const file = e.target.files && e.target.files[0]; // Lấy file đầu tiên
+                      if (file) {
+                        setFileUpload(file);
+                      } else {
+                        setFileUpload(null);
+                      }
+                    }}
+                    id="design-file"
+                    type="file"
+                    // accept=".rvt,.dwg,.dxf,.skp,.pln,.mod,.teklastructures"
+                  />
+                  <label htmlFor="description">Mô tả</label>
+                  <textarea
+                    onChange={(e) => setDescription(e.target.value)}
+                    id="description"
+                    className="border-2 border-gray-200"
+                  ></textarea>
+                  <div className="flex justify-end gap-[10px]">
+                    <button
+                      type="submit"
+                      disabled={!isUploadAvailable}
+                      className={`px-[10px] py-[5px] ${
+                        isUploadAvailable
+                          ? "cursor-pointer bg-[#1b2c5a] text-white"
+                          : "cursor-not-allowed bg-[#e9e9e9] text-[#b4b4b4] "
+                      }`}
+                    >
+                      Upload
+                    </button>
+                    <button className="px-[10px] py-[5px] bg-red-700 text-white">
+                      Hủy bỏ
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         </div>

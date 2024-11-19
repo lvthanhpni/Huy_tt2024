@@ -2,30 +2,78 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { IFolderItems } from "@/utils/interfaces";
 import { FolderArrow, FolderIcon } from "@/public/assets/svg";
 import { Collapse } from "@mui/material";
+import axios from "axios";
+import { refreshAccessToken } from "@/utils/authorization";
 
 function FolderList({
   data,
   level,
   setIsLastFolder,
-  setChoosenFolderId,
-  choosenFolderId,
+  setIsUploadAvailable,
+  setChosenFolder,
+  chosenFolder,
+  setCanDelete,
 }: {
   data: IFolderItems[];
   level: number;
   setIsLastFolder?: Dispatch<SetStateAction<boolean>>;
-  setChoosenFolderId?: Dispatch<SetStateAction<number>>;
-  choosenFolderId?: number;
+  setIsUploadAvailable?: Dispatch<SetStateAction<boolean>>;
+  chosenFolder?: IFolderItems | null;
+  setChosenFolder?: Dispatch<SetStateAction<IFolderItems | null>>;
+  setCanDelete?: Dispatch<SetStateAction<boolean>>;
 }) {
   const [isFolderOpen, setIsFolderOpen] = useState(false);
+
+  const checkDeletePermission = async (level: number) => {
+    refreshAccessToken();
+    await axios
+      .get(process.env.NEXT_PUBLIC_API_URL + "/user/", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access")}`,
+        },
+      })
+      .then((response) => {
+        if (
+          response.data.user_id ===
+          data.find((folder) => folder.id === level)?.owner
+        ) {
+          if (setCanDelete) {
+            console.log("Can delete");
+            setCanDelete(true);
+          }
+        } else {
+          if (setCanDelete) {
+            setCanDelete(false);
+          }
+        }
+      });
+  };
+
   const handleFolderClick = () => {
+    checkDeletePermission(level);
+
+    const folder = data.find((folder) => folder.id === level);
+    const hasChildren = folder && folder.children.length > 0;
+
     setIsFolderOpen(!isFolderOpen);
-    if (setChoosenFolderId) {
-      setChoosenFolderId(level);
+
+    if (setChosenFolder) {
+      if (folder) {
+        setChosenFolder(folder);
+      }
     }
-    const clickedFolder = data.find((folder) => folder.id === level);
-    const hasChildren = clickedFolder && clickedFolder.children.length > 0;
     if (setIsLastFolder) {
       setIsLastFolder(!hasChildren);
+    }
+
+    if (folder?.can_upload) {
+      if (setIsUploadAvailable) {
+        setIsUploadAvailable(true);
+      }
+    } else {
+      if (setIsUploadAvailable) {
+        setIsUploadAvailable(false);
+      }
     }
   };
 
@@ -38,7 +86,7 @@ function FolderList({
               <div
                 onClick={handleFolderClick}
                 className={`flex h-[24px] items-center cursor-pointer ${
-                  choosenFolderId === folder.id ? "bg-blue-300" : ""
+                  chosenFolder?.id === folder.id ? "bg-blue-300" : ""
                 } hover:bg-gray-200`}
                 key={index}
               >
@@ -66,8 +114,10 @@ function FolderList({
                 data={data}
                 level={child}
                 setIsLastFolder={setIsLastFolder}
-                setChoosenFolderId={setChoosenFolderId}
-                choosenFolderId={choosenFolderId}
+                setIsUploadAvailable={setIsUploadAvailable}
+                setChosenFolder={setChosenFolder}
+                chosenFolder={chosenFolder}
+                setCanDelete={setCanDelete}
               />
             </Collapse>
           ));

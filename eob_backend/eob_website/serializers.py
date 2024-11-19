@@ -71,7 +71,7 @@ class IndividualUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IndividualUser
-        fields = ['email', 'name', 'avatar', 'user_rank', 'occupation', 'organization', 'organization_name', 'phone_number']
+        fields = ['user_id','email', 'name', 'avatar', 'user_rank', 'occupation', 'organization', 'organization_name', 'phone_number']
 
     def update(self, instance, validated_data):
         user_data = validated_data.pop('user', {})
@@ -119,10 +119,27 @@ class OrganizationUserSerializer(serializers.ModelSerializer):
 class FolderViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Folder
-        fields = ['id','name', 'folder_type', 'parent', 'children', 'is_root']
+        fields = ['id','name', 'parent', 'children', 'is_root', 'can_upload', 'owner']
     
     def get_children(self, obj):
         return FolderViewSerializer(obj.children.all(), many=True).data
+    
+    def perform_destroy(self, instance):
+        instance.delete()
+
+class FolderCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Folder
+        fields = ['name', 'parent', 'is_root', 'can_upload', 'owner']
+
+    def create(self, validated_data):
+        name = validated_data.pop('name', None)
+        parrent = validated_data.pop('parent', None)
+        is_root = validated_data.pop('is_root', None)
+        can_upload = validated_data.pop('can_upload', None)
+        owner = self.context['request'].user
+        return Folder.objects.create(name=name, parent=parrent, is_root=is_root, can_upload=can_upload, owner=owner)
+    
 
 class OccupationCreateViewSerializer(serializers.ModelSerializer):
     class Meta:
@@ -132,10 +149,11 @@ class OccupationCreateViewSerializer(serializers.ModelSerializer):
 class MaterialUploadViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Material
-        fields = ['name', 'file', 'folder_id', 'description', 'preview_image', 'material_type', 'software']
+        fields = ['name', 'file_upload', 'folder_id', 'description', 'preview_image', 'material_type', 'software']
 
     def create(self, validated_data):
-        file = validated_data.pop('file', None)
+        name = validated_data.pop('name', None)
+        file_upload = validated_data.pop('file_upload', None)
         folder_id = validated_data.pop('folder_id', None)
         description = validated_data.pop('description', None)
         preview_image = validated_data.pop('preview_image', None)
@@ -145,15 +163,16 @@ class MaterialUploadViewSerializer(serializers.ModelSerializer):
 
         if folder_id is not None:
             try:
-                folder = Folder.objects.get(id=folder_id)  # Thay thế 'Folder' bằng tên model thư mục của bạn nếu khác
+                folder_id = Folder.objects.get(id=folder_id.id)  # Thay thế 'Folder' bằng tên model thư mục của bạn nếu khác
             except Folder.DoesNotExist:
                 raise serializers.ValidationError("Folder not found.")
         else:
-            folder = None
+            folder_id = None
 
         material = Material.objects.create(
-            file=file,
-            folder=folder,
+            name = name,
+            file_upload=file_upload,
+            folder_id=folder_id,
             description=description,
             preview_image=preview_image,
             material_type=material_type,
