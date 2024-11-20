@@ -89,11 +89,9 @@ class Material(models.Model):
   software = models.CharField(max_length=255)
   name = models.CharField(max_length=255, default="File_upload")
   file_size = models.CharField(max_length=255)
-  color = models.CharField(max_length=255)
   model_size = models.CharField(max_length=255)
   material_type = models.CharField(max_length=255)
   file_upload = models.FileField(upload_to='materials/')
-  preview_image = models.ImageField(upload_to='previews/')
   download_count = models.IntegerField(default=0)
   create_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
   folder_id = models.ForeignKey('Folder', on_delete=models.CASCADE, default=1)
@@ -113,3 +111,8 @@ class ReviewPost(models.Model):
 
   def __str__(self):
     return self.name
+  
+
+class FilePreviewImage(models.Model):
+  image = models.ImageField(upload_to='previews/')
+  material = models.ForeignKey('Material', on_delete=models.CASCADE)

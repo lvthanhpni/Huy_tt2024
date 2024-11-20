@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Folder, Occupation, Material,  OrganizationUser, CustomUser, IndividualUser
+from .models import FilePreviewImage, Folder, Occupation, Material,  OrganizationUser, CustomUser, IndividualUser
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import FolderViewSerializer, FolderCreateSerializer, MaterialUploadViewSerializer, OccupationCreateViewSerializer, UserLoginSerializer, UserRegisterSerializer, OrganizationUserSerializer, IndividualUserSerializer
 from rest_framework import generics, status
@@ -149,19 +149,6 @@ class OccupationListCreateView(generics.ListCreateAPIView):
   serializer_class = OccupationCreateViewSerializer
 
 class MaterialListCreateView(generics.ListCreateAPIView):
-  queryset= Material.objects.all()
-  serializer_class = MaterialUploadViewSerializer
-  permission_classes = [IsAuthenticated]
-
-  def get(self, request):
-    materials = Material.objects.all()
-    serializer = MaterialUploadViewSerializer(materials, many=True)
-    return Response(serializer.data)
-  
-
-  def put(self, request):
-    serializer = MaterialUploadViewSerializer(data=request.data)
-    if serializer.is_valid():
-      serializer.save()
-      return Response(serializer.data)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    queryset = Material.objects.all()
+    serializer_class = MaterialUploadViewSerializer
+    permission_classes = [IsAuthenticated]

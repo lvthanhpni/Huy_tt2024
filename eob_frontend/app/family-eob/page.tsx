@@ -7,9 +7,6 @@ import { AddButtonIcon, SearchIcon } from "@/public/assets/svg";
 import Image from "next/image";
 import logo_slogan from "@/public/assets/images/logo_slogan.png";
 import { checkAuthorization, refreshAccessToken } from "@/utils/authorization";
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import UploadModal from "@/components/FamilyLibrary/UploadModal";
 import { Button, TextField } from "@mui/material";
 
@@ -56,47 +53,73 @@ function EOBLibrary() {
 
   const handleDeleteFolder = async () => {
     refreshAccessToken();
-    console.log(chosenFolder);
     if (canDelete) {
       try {
-        const response = await axios.delete(
-          process.env.NEXT_PUBLIC_API_URL + `/folder/${chosenFolder?.id}/`,
+        await axios
+          .delete(
+            process.env.NEXT_PUBLIC_API_URL + `/folder/${chosenFolder?.id}/`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("access")}`,
+              },
+            }
+          )
+          .then(() => {
+            fetchFolderData();
+            setChosenFolder(null);
+            setCanDelete(false);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const handleCreateFolder = (e: React.MouseEvent<HTMLButtonElement>) => {
+    try {
+      axios
+        .post(
+          process.env.NEXT_PUBLIC_API_URL + "/folder/",
+          {
+            name: folderName,
+            parent: chosenFolder?.id,
+            is_root: false,
+            can_upload: true,
+          },
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access")}`,
             },
           }
-        );
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    setChosenFolder(null);
-    setCanDelete(false);
-
-    fetchFolderData();
-  };
-
-  const handleCreateFolder = (e: React.MouseEvent<HTMLButtonElement>) => {
-    try {
-      const response = axios.post(
-        process.env.NEXT_PUBLIC_API_URL + "/folder/",
-        {
-          name: folderName,
-          parent: chosenFolder?.id,
-          is_root: false,
-          can_upload: true,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access")}`,
-          },
-        }
-      );
+        )
+        .then(() => {
+          fetchFolderData();
+        });
     } catch (error) {
       console.log(error);
     }
-    fetchFolderData();
+  };
+
+  const handleRenameFolder = (e: React.MouseEvent<HTMLButtonElement>) => {
+    try {
+      axios
+        .patch(
+          process.env.NEXT_PUBLIC_API_URL + `/folder/${chosenFolder?.id}/`,
+          {
+            name: folderName,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access")}`,
+            },
+          }
+        )
+        .then(() => {
+          fetchFolderData();
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -154,7 +177,18 @@ function EOBLibrary() {
                 >
                   Thêm thư mục mới
                 </Button>
-
+                <Button
+                  onClick={handleRenameFolder}
+                  disabled={!canDelete}
+                  variant="contained"
+                  sx={{
+                    backgroundColor: canDelete ? "#ebd13f" : "#f3f3f3",
+                    color: canDelete ? "#ffffff" : "#b4b4b4",
+                    px: 1,
+                  }}
+                >
+                  Đổi tên thư mục
+                </Button>
                 <Button
                   onClick={handleDeleteFolder}
                   variant="contained"
@@ -251,6 +285,7 @@ function EOBLibrary() {
         </div>
       </div>
       <UploadModal
+        chosenFolder={chosenFolder}
         isOpen={isUploadModalOpen}
         setIsOpen={setIsUploadModalOpen}
       />

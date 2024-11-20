@@ -9,9 +9,12 @@ import {
 import Box from "@mui/material/Box";
 import { styled } from "@mui/material/styles";
 import Modal from "@mui/material/Modal";
-import React from "react";
+import React, { useState } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { CloseButtonIcon } from "@/public/assets/svg";
+import { IFolderItems } from "@/utils/interfaces";
+import axios from "axios";
+import { refreshAccessToken } from "@/utils/authorization";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -31,10 +34,54 @@ const MaterialType = ["Kiến trúc", "Kết cấu", "MEP"];
 function UploadModal({
   isOpen,
   setIsOpen,
+  chosenFolder,
 }: {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  chosenFolder: IFolderItems | null;
 }) {
+  const [fileUpload, setFileUpload] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<FileList | null>(null);
+  const [description, setDescription] = useState<string>("");
+  const [software, setSoftware] = useState<string>("");
+  const [materialType, setMaterialType] = useState<string>("");
+  const [fileName, setFileName] = useState<string>("");
+
+  const handleUpload = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const data = new FormData();
+    data.append("file_upload", fileUpload!);
+    data.append("name", fileName);
+    data.append("software", software);
+    data.append("material_type", materialType);
+    data.append("description", description);
+    if (chosenFolder?.id !== undefined) {
+      data.append("folder_id", chosenFolder.id.toString());
+    }
+
+    if (previewImage) {
+      Array.from(previewImage).forEach((image) => {
+        data.append("preview_images", image);
+      });
+    }
+
+    try {
+      refreshAccessToken();
+      axios
+        .post(process.env.NEXT_PUBLIC_API_URL + "/files/", data, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(() => {
+          setIsOpen(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Modal
       open={isOpen}
@@ -67,12 +114,26 @@ function UploadModal({
         </div>
         <hr className="border-gray-300" />
         <div className="mt-[20px]">
-          <form className="flex flex-col gap-[20px]">
-            <TextField label="Tên file upload" variant="outlined" />
+          <form
+            onSubmit={(e) => handleUpload(e)}
+            className="flex flex-col gap-[20px]"
+          >
+            <TextField
+              label="Tên file upload"
+              variant="outlined"
+              onChange={(e) => setFileName(e.target.value)}
+            />
             <div className="flex justify-around gap-[20px]">
               <FormControl className="flex-1">
                 <InputLabel id="software-select">Chọn phần mềm</InputLabel>
-                <Select labelId="software-select" label="Chọn phần mềm">
+                <Select
+                  onChange={(e) => {
+                    setSoftware(e.target.value);
+                  }}
+                  defaultValue={"Revit"}
+                  labelId="software-select"
+                  label="Chọn phần mềm"
+                >
                   {SoftwareList.map((solfware, index) => {
                     return (
                       <MenuItem key={index} value={solfware}>
@@ -84,7 +145,14 @@ function UploadModal({
               </FormControl>
               <FormControl className="flex-1">
                 <InputLabel id="material-type-select">Loại vật liệu</InputLabel>
-                <Select labelId="material-type-select" label="Loại vật liệu">
+                <Select
+                  onChange={(e) => {
+                    setMaterialType(e.target.value);
+                  }}
+                  defaultValue={"Kiến trúc"}
+                  labelId="material-type-select"
+                  label="Loại vật liệu"
+                >
                   {MaterialType.map((material, index) => (
                     <MenuItem key={index} value={material}>
                       {material}
@@ -105,7 +173,10 @@ function UploadModal({
                 Upload files
                 <VisuallyHiddenInput
                   type="file"
-                  onChange={(event) => console.log(event.target.files)}
+                  onChange={(event) => {
+                    setFileUpload(event.target.files![0]);
+                    console.log(event.target.files);
+                  }}
                   multiple
                 />
               </Button>
@@ -120,7 +191,10 @@ function UploadModal({
                 Hình preview
                 <VisuallyHiddenInput
                   type="file"
-                  onChange={(event) => console.log(event.target.files)}
+                  onChange={(event) => {
+                    console.log(event.target.files);
+                    setPreviewImage(event.target.files);
+                  }}
                   multiple
                 />
               </Button>
@@ -130,12 +204,15 @@ function UploadModal({
               <textarea
                 rows={5}
                 name=""
+                onChange={(e) => setDescription(e.target.value)}
                 id="description-input"
                 className="text-wrap border-2 border-gray-300 rounded-md p-[5px]"
               ></textarea>
             </div>
             <div className="flex justify-end gap-[20px]">
-              <Button variant="contained">Upload</Button>
+              <Button type="submit" variant="contained">
+                Upload
+              </Button>
               <Button variant="contained">Đặt lại</Button>
             </div>
           </form>

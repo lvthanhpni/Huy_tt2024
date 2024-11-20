@@ -1,4 +1,4 @@
-from .models import Folder, CustomUser, IndividualUser, Occupation, OrganizationUser, Material
+from .models import FilePreviewImage, Folder, CustomUser, IndividualUser, Occupation, OrganizationUser, Material
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 
@@ -76,7 +76,6 @@ class IndividualUserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         user_data = validated_data.pop('user', {})
         user = instance.user
-        print(user_data.get('user_rank', user.user_rank))
         user.name = user_data.get('name', user.name)
         user.avatar = user_data.get('avatar', user.avatar)
         user_rank = user_data.get('user_rank', user.user_rank)
@@ -146,17 +145,22 @@ class OccupationCreateViewSerializer(serializers.ModelSerializer):
         model = Occupation
         fields = ['id','name']
 
-class MaterialUploadViewSerializer(serializers.ModelSerializer):
+class FilePreviewImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Material
-        fields = ['name', 'file_upload', 'folder_id', 'description', 'preview_image', 'material_type', 'software']
+        fields = ['id', 'image', 'material']
+class MaterialUploadViewSerializer(serializers.ModelSerializer):
+    preview_images = serializers.ListField(child=serializers.ImageField(), write_only=True)
+    class Meta:
+        model = Material
+        fields = ['name', 'file_upload', 'preview_images', 'folder_id', 'description', 'material_type', 'software']
 
     def create(self, validated_data):
         name = validated_data.pop('name', None)
         file_upload = validated_data.pop('file_upload', None)
         folder_id = validated_data.pop('folder_id', None)
         description = validated_data.pop('description', None)
-        preview_image = validated_data.pop('preview_image', None)
+        preview_images = validated_data.pop('preview_images', [])
         material_type = validated_data.pop('material_type', None)
         software = validated_data.pop('software', None)
         create_user = self.context['request'].user
@@ -174,10 +178,11 @@ class MaterialUploadViewSerializer(serializers.ModelSerializer):
             file_upload=file_upload,
             folder_id=folder_id,
             description=description,
-            preview_image=preview_image,
             material_type=material_type,
             software=software,
             create_user=create_user
         )
+        for image in preview_images:
+            FilePreviewImage.objects.create(image=image, material=material)
         return material
 
