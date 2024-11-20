@@ -151,4 +151,9 @@ class OccupationListCreateView(generics.ListCreateAPIView):
 class MaterialListCreateView(generics.ListCreateAPIView):
     queryset = Material.objects.all()
     serializer_class = MaterialUploadViewSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        materials = Material.objects.all()
+        serializer = MaterialUploadViewSerializer(materials, many=True)
+        return Response(serializer.data)
