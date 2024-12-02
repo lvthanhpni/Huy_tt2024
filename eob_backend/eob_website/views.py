@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import FilePreviewImage, Folder, Occupation, Material,  OrganizationUser, CustomUser, IndividualUser
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import FolderViewSerializer, FolderCreateSerializer, MaterialUploadViewSerializer, OccupationCreateViewSerializer, UserLoginSerializer, UserRegisterSerializer, OrganizationUserSerializer, IndividualUserSerializer
+from .serializers import FolderViewSerializer, FolderCreateSerializer, MaterialSerializer, OccupationCreateViewSerializer, UserLoginSerializer, UserRegisterSerializer, OrganizationUserSerializer, IndividualUserSerializer
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -16,9 +16,14 @@ class LoginView(APIView):
     if serializer.is_valid():
       user = serializer.validated_data
       refresh = RefreshToken.for_user(user)
+      if hasattr(user, 'individualuser'):
+        user_data = IndividualUserSerializer(user.individualuser).data
+      elif hasattr(user, 'organizationuser'):
+        user_data = OrganizationUserSerializer(user.organizationuser).data
       return Response({
         'refresh': str(refresh),
         'access': str(refresh.access_token),
+        'user': user_data ,
       }, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class get_csrf_token(APIView):
@@ -41,9 +46,9 @@ class GoogleLoginView(APIView):
     if not email:
       return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
     
-    user, created = CustomUser.objects.get_or_create(email=email, defaults={'phone_number': '0000000000'})
+    user, created = CustomUser.objects.get_or_create(email=email, name=name)
     if created:
-      IndividualUser.objects.create(user=user, name=name)
+      IndividualUser.objects.create(user=user)
 
     refresh = RefreshToken.for_user(user)
     return Response({
@@ -149,11 +154,18 @@ class OccupationListCreateView(generics.ListCreateAPIView):
   serializer_class = OccupationCreateViewSerializer
 
 class MaterialListCreateView(generics.ListCreateAPIView):
-    queryset = Material.objects.all()
-    serializer_class = MaterialUploadViewSerializer
-    # permission_classes = [IsAuthenticated]
-    
-    def get(self, request):
-        materials = Material.objects.all()
-        serializer = MaterialUploadViewSerializer(materials, many=True)
-        return Response(serializer.data)
+    serializer_class = MaterialSerializer
+    # permission_classes = [IsAuthenticated]  # Nếu bạn cần bảo mật thì bỏ comment dòng này
+
+    def get_queryset(self):
+        folder_id = self.request.query_params.get('folder_id')
+        
+        if folder_id:
+            materials = Material.objects.filter(folder_id=folder_id)
+            return materials
+
+        return Material.objects.none()
+
+class MaterialRetrieveUpdateView(generics.RetrieveUpdateAPIView):
+  serializer_class = MaterialSerializer
+  queryset = Material.objects.all()

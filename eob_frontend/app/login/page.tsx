@@ -23,6 +23,7 @@ function LoginPage() {
           password,
         }
       );
+      console.log(response.data);
       localStorage.setItem("access", response.data.access);
       localStorage.setItem("refresh", response.data.refresh);
       window.location.href = "/";

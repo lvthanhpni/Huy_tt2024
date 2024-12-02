@@ -15,6 +15,8 @@ import { CloseButtonIcon } from "@/public/assets/svg";
 import { IFolderItems } from "@/utils/interfaces";
 import axios from "axios";
 import { refreshAccessToken } from "@/utils/authorization";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -43,8 +45,8 @@ function UploadModal({
   const [fileUpload, setFileUpload] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<FileList | null>(null);
   const [description, setDescription] = useState<string>("");
-  const [software, setSoftware] = useState<string>("");
-  const [materialType, setMaterialType] = useState<string>("");
+  const [software, setSoftware] = useState<string>("Revit");
+  const [materialType, setMaterialType] = useState<string>("Kiến trúc");
   const [fileName, setFileName] = useState<string>("");
 
   const handleUpload = (e: React.FormEvent<HTMLFormElement>) => {
@@ -61,7 +63,7 @@ function UploadModal({
 
     if (previewImage) {
       Array.from(previewImage).forEach((image) => {
-        data.append("preview_images", image);
+        data.append("preview_images_post", image);
       });
     }
 
@@ -130,7 +132,7 @@ function UploadModal({
                   onChange={(e) => {
                     setSoftware(e.target.value);
                   }}
-                  defaultValue={"Revit"}
+                  defaultValue={software}
                   labelId="software-select"
                   label="Chọn phần mềm"
                 >
@@ -149,7 +151,7 @@ function UploadModal({
                   onChange={(e) => {
                     setMaterialType(e.target.value);
                   }}
-                  defaultValue={"Kiến trúc"}
+                  defaultValue={materialType}
                   labelId="material-type-select"
                   label="Loại vật liệu"
                 >
@@ -201,13 +203,18 @@ function UploadModal({
             </div>
             <div className="flex flex-col">
               <label htmlFor="description-input">Mô tả</label>
-              <textarea
+              <ReactQuill
+                theme="snow"
+                value={description}
+                onChange={setDescription}
+              />
+              {/* <textarea
                 rows={5}
                 name=""
                 onChange={(e) => setDescription(e.target.value)}
                 id="description-input"
                 className="text-wrap border-2 border-gray-300 rounded-md p-[5px]"
-              ></textarea>
+              ></textarea> */}
             </div>
             <div className="flex justify-end gap-[20px]">
               <Button type="submit" variant="contained">

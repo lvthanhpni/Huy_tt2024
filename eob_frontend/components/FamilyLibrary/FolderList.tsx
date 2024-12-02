@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { IFolderItems } from "@/utils/interfaces";
+import { IFileItem, IFolderItems } from "@/utils/interfaces";
 import { FolderArrow, FolderIcon } from "@/public/assets/svg";
 import { Collapse } from "@mui/material";
 import axios from "axios";
@@ -13,6 +13,8 @@ function FolderList({
   setChosenFolder,
   chosenFolder,
   setCanDelete,
+  setFileItems,
+  setMaterialDetailId,
 }: {
   data: IFolderItems[];
   level: number;
@@ -21,6 +23,8 @@ function FolderList({
   chosenFolder?: IFolderItems | null;
   setChosenFolder?: Dispatch<SetStateAction<IFolderItems | null>>;
   setCanDelete?: Dispatch<SetStateAction<boolean>>;
+  setFileItems?: Dispatch<SetStateAction<IFileItem[] | []>>;
+  setMaterialDetailId?: Dispatch<SetStateAction<number | null>>;
 }) {
   const [isFolderOpen, setIsFolderOpen] = useState(false);
 
@@ -52,6 +56,15 @@ function FolderList({
   const handleFolderClick = () => {
     checkDeletePermission(level);
 
+    axios
+      .get(process.env.NEXT_PUBLIC_API_URL + `/files/?folder_id=${level}`)
+      .then((response) => {
+        if (setFileItems) {
+          setFileItems(response.data);
+        }
+        console.log(response.data);
+      });
+
     const folder = data.find((folder) => folder.id === level);
     const hasChildren = folder && folder.children.length > 0;
 
@@ -65,6 +78,8 @@ function FolderList({
     if (setIsLastFolder) {
       setIsLastFolder(!hasChildren);
     }
+
+    setMaterialDetailId && setMaterialDetailId(null);
 
     if (folder?.can_upload) {
       if (setIsUploadAvailable) {
@@ -118,6 +133,8 @@ function FolderList({
                 setChosenFolder={setChosenFolder}
                 chosenFolder={chosenFolder}
                 setCanDelete={setCanDelete}
+                setFileItems={setFileItems}
+                setMaterialDetailId={setMaterialDetailId}
               />
             </Collapse>
           ));

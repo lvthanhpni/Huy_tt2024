@@ -12,3 +12,6 @@ export { default as FolderArrow } from "./FolderArrow";
 export { default as CameraIcon } from "./CameraIcon";
 export { default as AddButtonIcon } from "./AddButtonIcon";
 export { default as CloseButtonIcon } from "./CloseButtonIcon";
+export { default as FacebookIconNonBackground } from "./FacebookIconNonBackground";
+export { default as LinkedInNonBackgroundIcon } from "./LinkedInNonBackgroundIcon";
+export { default as DonwloadIcon } from "./DownloadIcon";

@@ -146,21 +146,47 @@ class OccupationCreateViewSerializer(serializers.ModelSerializer):
         fields = ['id','name']
 
 class FilePreviewImageSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField()
     class Meta:
-        model = Material
+        model = FilePreviewImage
         fields = ['id', 'image', 'material']
-class MaterialUploadViewSerializer(serializers.ModelSerializer):
-    preview_images = serializers.ListField(child=serializers.ImageField(), write_only=True)
+
+    def create(self, validated_data):
+        image = validated_data.pop('image', None)
+        material = Material.objects.get(id=self.context['material_id'])
+        return FilePreviewImage.objects.create(image=image, )
+
+class MaterialSerializer(serializers.ModelSerializer):
+    preview_images_post = serializers.ListField(child=serializers.ImageField(), write_only=True)
+    preview_images_get = FilePreviewImageSerializer(many=True, required=False, read_only=True)
+    # preview_images = FilePreviewImageSerializer(many=True)
+
     class Meta:
         model = Material
-        fields = ['name', 'file_upload', 'preview_images', 'folder_id', 'description', 'material_type', 'software']
+        # fields = ['name', 'file_upload', 'preview_images', 'folder_id', 'description', 'material_type', 'software']
+        fields = ['id','name', 'file_upload', 'preview_images_post','preview_images_get', 'folder_id', 'description', 'material_type', 'software']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        create_user = CustomUser.objects.get(id=instance.create_user.id)
+
+        preview_images = FilePreviewImage.objects.filter(material=instance)
+        
+        preview_images_serialized = FilePreviewImageSerializer(preview_images, many=True).data
+
+        representation['preview_images_get'] = preview_images_serialized
+        representation['create_user'] = create_user.name
+
+        return representation
+
 
     def create(self, validated_data):
         name = validated_data.pop('name', None)
         file_upload = validated_data.pop('file_upload', None)
         folder_id = validated_data.pop('folder_id', None)
         description = validated_data.pop('description', None)
-        preview_images = validated_data.pop('preview_images', [])
+        preview_images = validated_data.pop('preview_images_post', [])
         material_type = validated_data.pop('material_type', None)
         software = validated_data.pop('software', None)
         create_user = self.context['request'].user
@@ -185,4 +211,5 @@ class MaterialUploadViewSerializer(serializers.ModelSerializer):
         for image in preview_images:
             FilePreviewImage.objects.create(image=image, material=material)
         return material
+
 
