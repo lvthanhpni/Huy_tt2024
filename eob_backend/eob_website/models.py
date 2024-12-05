@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
@@ -108,6 +109,8 @@ class ReviewPost(models.Model):
   star = models.IntegerField()
   comment = models.TextField()
   product_id = models.ForeignKey('Material', on_delete=models.CASCADE)
+  post_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
+  upload_date = models.DateTimeField(auto_now_add=True)
 
   def __str__(self):
     return self.name

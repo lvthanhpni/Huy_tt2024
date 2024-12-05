@@ -2,9 +2,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
-import { IFileItem } from "@/utils/interfaces";
+import { IFileItem, IReviewPost } from "@/utils/interfaces";
 import { useParams } from "next/navigation";
 import { Button, Rating } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import {
   FacebookIconNonBackground,
   LinkedInNonBackgroundIcon,
@@ -16,12 +17,22 @@ import "swiper/css";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
+import ReactQuill from "react-quill";
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
 }
+
+const StyledRating = styled(Rating)({
+  "& .MuiRating-iconFilled": {
+    color: "#ff6d75",
+  },
+  "& .MuiRating-iconHover": {
+    color: "#ff3d47",
+  },
+});
 
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -33,6 +44,7 @@ function CustomTabPanel(props: TabPanelProps) {
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
+      // onClick={handleRatingPost}
     >
       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
@@ -49,12 +61,34 @@ function a11yProps(index: number) {
 function MaterialDetails() {
   const [fileDetail, setFileDetail] = useState<IFileItem | null>();
   const param = useParams();
+  const [userAvatar, setUserAvatar] = useState<string | null>(null);
 
   const [value, setValue] = useState(0);
-  const [ratingValue, setRatingValue] = useState(0);
+  const [ratingValue, setRatingValue] = useState<number>(5);
+
+  const [comment, setComment] = useState<string | null>(null);
+
+  const [postList, setPostList] = useState<IReviewPost[] | null>(null);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+  };
+
+  const handleRatingPost = () => {
+    console.log(param.fileid[0]);
+    axios.post(
+      process.env.NEXT_PUBLIC_API_URL + "/review/",
+      {
+        star: ratingValue,
+        comment: comment,
+        product_id: param.fileid[0],
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access"),
+        },
+      }
+    );
   };
 
   useEffect(() => {
@@ -62,6 +96,18 @@ function MaterialDetails() {
       .get(process.env.NEXT_PUBLIC_API_URL + "/files/" + param.fileid)
       .then((response) => {
         setFileDetail(response.data);
+        setUserAvatar(response.data.create_user_avatar);
+      });
+
+    axios
+      .get(
+        process.env.NEXT_PUBLIC_API_URL +
+          "/review/" +
+          `?product_id=${param.fileid}`
+      )
+      .then((response) => {
+        setPostList(response.data);
+        console.log(response.data);
       });
   }, []);
   return (
@@ -109,6 +155,16 @@ function MaterialDetails() {
               <p className="uppercase text-[#ed1d47]">
                 {fileDetail?.create_user}
               </p>
+              <div className="h-[100px] w-[100px] text-center overflow-hidden">
+                {userAvatar && (
+                  <Image
+                    src={process.env.NEXT_PUBLIC_API_SERVER + userAvatar}
+                    alt="Avatar"
+                    width={200}
+                    height={100}
+                  />
+                )}
+              </div>
             </div>
           </div>
           <div>
@@ -162,29 +218,65 @@ function MaterialDetails() {
         <CustomTabPanel value={value} index={1}>
           <div className="flex">
             <div className="flex-1">
-              <p className="text-[#1b2c5a] text-[24px]">đánh giá</p>
+              <p className="text-[#1b2c5a] text-[24px]">
+                {postList ? postList.length : 0} đánh giá
+              </p>
+              <div className="flex flex-col">
+                {postList?.map((item, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="flex border-2 border-gray-200 p-[10px] m-[10px]"
+                    >
+                      <div className="flex flex-col">
+                        <div className="font-bold text-[20px]">
+                          {item.post_user_name}
+                        </div>
+                        <div className="flex">
+                          <div>
+                            <StyledRating
+                              name="read-only"
+                              value={item.star}
+                              readOnly
+                            />
+                          </div>
+                        </div>
+                        <div
+                          dangerouslySetInnerHTML={{ __html: item.comment }}
+                        ></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
             <div className="flex-1 flex flex-col gap-[20px]">
               <p className="text-[24px]">Đánh giá</p>
               <p className="text-[12px]">Những trường bắt buộc</p>
               <div className="flex">
                 <p>Bạn đã đánh giá:</p>
-                <Rating
+                <StyledRating
                   name="simple-uncontrolled"
                   onChange={(event, newValue) => {
-                    console.log(newValue);
+                    setRatingValue(newValue ? newValue : 5);
                   }}
-                  defaultValue={2}
+                  defaultValue={ratingValue}
                 />
               </div>
               <label htmlFor="user-rating-text" className="block">
                 Nhận xét của tôi:
               </label>
-              <textarea
-                id="user-rating-text"
-                className="border-2 border-gray-300 w-full min-h-[100px]"
-              ></textarea>
+              <div className="h-[200px]">
+                <ReactQuill
+                  theme="snow"
+                  value={comment ? comment : ""}
+                  onChange={setComment}
+                  style={{ height: "150px" }}
+                />
+              </div>
+
               <Button
+                onClick={handleRatingPost}
                 className="w-fit"
                 size="small"
                 sx={{ backgroundColor: "#1b2c5a", color: "white" }}

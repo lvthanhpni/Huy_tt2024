@@ -208,13 +208,6 @@ function UploadModal({
                 value={description}
                 onChange={setDescription}
               />
-              {/* <textarea
-                rows={5}
-                name=""
-                onChange={(e) => setDescription(e.target.value)}
-                id="description-input"
-                className="text-wrap border-2 border-gray-300 rounded-md p-[5px]"
-              ></textarea> */}
             </div>
             <div className="flex justify-end gap-[20px]">
               <Button type="submit" variant="contained">

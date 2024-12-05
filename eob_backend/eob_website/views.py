@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from .models import FilePreviewImage, Folder, Occupation, Material,  OrganizationUser, CustomUser, IndividualUser
+from .models import FilePreviewImage, Folder, Occupation, Material,  OrganizationUser, CustomUser, IndividualUser, ReviewPost
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import FolderViewSerializer, FolderCreateSerializer, MaterialSerializer, OccupationCreateViewSerializer, UserLoginSerializer, UserRegisterSerializer, OrganizationUserSerializer, IndividualUserSerializer
+from .serializers import FolderViewSerializer, FolderCreateSerializer, MaterialSerializer, OccupationCreateViewSerializer, ReviewPostSerializer, UserLoginSerializer, UserRegisterSerializer, OrganizationUserSerializer, IndividualUserSerializer
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -61,7 +61,6 @@ class RegisterView(generics.CreateAPIView):
   serializer_class = UserRegisterSerializer
 
   def perform_create(self, serializer):
-    print(serializer)
     user = serializer.save()
     refresh = RefreshToken.for_user(user)
     self.token_data = {
@@ -169,3 +168,22 @@ class MaterialListCreateView(generics.ListCreateAPIView):
 class MaterialRetrieveUpdateView(generics.RetrieveUpdateAPIView):
   serializer_class = MaterialSerializer
   queryset = Material.objects.all()
+
+
+class ReviewPostListCreateView(generics.ListCreateAPIView):
+  queryset = ReviewPost.objects.all()
+  serializer_class = ReviewPostSerializer
+
+  def get_queryset(self):
+      product_id = self.request.GET.get('product_id')
+      if product_id:
+          return ReviewPost.objects.filter(product_id=product_id)
+      return super().get_queryset()
+
+  def perform_create(self, serializer):
+    serializer.save(post_user=self.request.user)
+
+
+class ReviewPostRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+  queryset = ReviewPost.objects.all()
+  serializer_class = ReviewPostSerializer

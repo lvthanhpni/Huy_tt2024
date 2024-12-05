@@ -1,4 +1,4 @@
-from .models import FilePreviewImage, Folder, CustomUser, IndividualUser, Occupation, OrganizationUser, Material
+from .models import FilePreviewImage, Folder, CustomUser, IndividualUser, Occupation, OrganizationUser, Material, ReviewPost
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 
@@ -159,11 +159,9 @@ class FilePreviewImageSerializer(serializers.ModelSerializer):
 class MaterialSerializer(serializers.ModelSerializer):
     preview_images_post = serializers.ListField(child=serializers.ImageField(), write_only=True)
     preview_images_get = FilePreviewImageSerializer(many=True, required=False, read_only=True)
-    # preview_images = FilePreviewImageSerializer(many=True)
 
     class Meta:
         model = Material
-        # fields = ['name', 'file_upload', 'preview_images', 'folder_id', 'description', 'material_type', 'software']
         fields = ['id','name', 'file_upload', 'preview_images_post','preview_images_get', 'folder_id', 'description', 'material_type', 'software']
 
     def to_representation(self, instance):
@@ -174,10 +172,11 @@ class MaterialSerializer(serializers.ModelSerializer):
         preview_images = FilePreviewImage.objects.filter(material=instance)
         
         preview_images_serialized = FilePreviewImageSerializer(preview_images, many=True).data
+        
 
         representation['preview_images_get'] = preview_images_serialized
         representation['create_user'] = create_user.name
-
+        representation['create_user_avatar'] = create_user.avatar.url
         return representation
 
 
@@ -213,3 +212,24 @@ class MaterialSerializer(serializers.ModelSerializer):
         return material
 
 
+class ReviewPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReviewPost
+        fields = ['id','star', 'comment', 'product_id', 'post_user']
+
+    def create(self, validated_data):
+        star = validated_data.pop('star', None)
+        comment = validated_data.pop('comment', None)
+        product_id = validated_data.pop('product_id', None)
+        post_user = self.context['request'].user
+        return ReviewPost.objects.create(star=star, comment=comment, product_id=product_id, post_user=post_user)
+    
+    def to_representation(self, instance):
+        post_user_avatar = instance.post_user.avatar.url
+        post_user_name = instance.post_user.name
+        representation = super().to_representation(instance)
+        upload_date = instance.upload_date
+        representation['post_user_avatar'] = post_user_avatar
+        representation['post_user_name'] = post_user_name
+        representation['upload_date'] = upload_date
+        return representation

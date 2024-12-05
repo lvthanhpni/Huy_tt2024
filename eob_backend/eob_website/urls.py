@@ -1,6 +1,6 @@
 from django.urls import path, include
 
-from .views import MaterialRetrieveUpdateView, UserRetrieveUpdateView, MaterialListCreateView, FolderRetrieveView, FolderViewSet, OccupationListCreateView, RegisterView, LoginView , get_csrf_token, GoogleLoginView
+from .views import MaterialRetrieveUpdateView, ReviewPostListCreateView, ReviewPostRetrieveUpdateDestroyView, UserRetrieveUpdateView, MaterialListCreateView, FolderRetrieveView, FolderViewSet, OccupationListCreateView, RegisterView, LoginView , get_csrf_token, GoogleLoginView
 
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -15,5 +15,7 @@ urlpatterns = [
   path('folder/<int:pk>/', FolderRetrieveView.as_view(), name='folder'),
   path('occupation/', OccupationListCreateView.as_view(), name='occupation'),
   path('files/', MaterialListCreateView.as_view(), name='files'),
-  path('files/<int:pk>/', MaterialRetrieveUpdateView.as_view(), name="files")
+  path('files/<int:pk>/', MaterialRetrieveUpdateView.as_view(), name="files"),
+  path('review/', ReviewPostListCreateView.as_view(), name='review'),
+  path('review/<int:pk>/', ReviewPostRetrieveUpdateDestroyView.as_view(), name='review'),
 ]
